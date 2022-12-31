@@ -1,0 +1,38 @@
+---
+type Props = {
+    title: string; 
+    summary: string;
+    date: string;
+    readingTime: string;
+    isLast: boolean;
+}
+const { title, summary, date, readingTime, isLast } = Astro.props
+
+let formattedDate = null
+if (date) {
+    const [_, month, day, year] = new Date(date).toDateString().split(' ')
+    formattedDate = `${month} ${Number(day)}, ${year}`
+}
+---
+
+<article>
+    <h2 class='title'>
+        { title }
+    </h2>
+    <div class='flex justify-between text-sm'>
+        <p>{formattedDate}</p>
+        <p>{readingTime}</p>
+    </div>
+    <div> { summary } </div>
+    {!isLast && <hr class='divider' />}
+</article>
+
+<style>
+    .title {
+        color: rgb(var(--accent2));
+        font-size: 2rem;
+    }
+    .divider {
+        margin: 1rem 0 .5rem;
+    }
+</style>

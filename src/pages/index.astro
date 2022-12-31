@@ -1,0 +1,21 @@
+---
+
+//import Card from '../components/Card.astro';
+import Layout from '../layouts/Layout.astro';
+import PostsList from '../components/PostsList.astro'
+
+
+---
+<Layout title="Outskirt Web Development">
+    <div class='custom-head'>
+        custom header
+    </div>
+    <PostsList />
+</Layout>
+ 
+<style>
+    .custom-head{
+        //background: rgb(var(--dark));
+        height: 500px
+    }
+</style>

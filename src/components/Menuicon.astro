@@ -1,0 +1,110 @@
+---
+---
+
+<div class='wrap'>
+    <svg class='svg' viewBox="-80 -80 160 160" >
+        <line class='menu-line' x1='-40' y1='-20' x2='40' y2='-20' stroke-width='10' stroke-linecap="round" /> 
+        <line class='menu-line' x1='-40' y1='20' x2='40' y2='20' stroke-width='10' stroke-linecap="round" /> 
+        <path class='close-path' d="M-20 20 L20 0 L-20 -20" stroke-width='10' stroke-linecap="round" stroke-linejoin="round" fill='transparent'/>
+    </svg>
+</div>
+<menu class='menu'>
+ <div class='menu-header'></div>
+ <div class='menu-content'> 
+    <ul>About</ul>
+    <ul>Postcards</ul>
+ </div>
+</menu>
+
+<script>
+    const lsKey = 'od-menuState'
+    let menuState = (window.sessionStorage.getItem(lsKey) || 'close') as 'open' | 'close' 
+    let open = menuState === 'open'
+    const wrap = document.querySelector('.wrap') as HTMLElement
+    const menu = document.querySelector('.menu') as HTMLElement
+    const svg = document.querySelector('.svg') as HTMLElement
+
+    const eventClose = new Event('menuStateClose')
+    const eventOpen = new Event('menuStateOpen')
+    setMenuState()
+
+    wrap.addEventListener('click', () => { 
+        open = !open 
+        setMenuState()
+        window.sessionStorage.setItem(lsKey, open ? 'open' : 'close')
+    })
+
+    function setMenuState () {
+       if (open){
+           reveilMenu()
+           return 
+       }
+       closeMenu()
+    }
+
+
+    function closeMenu () {
+        menu.classList.remove('show')
+        svg.classList.remove('show')
+        menu.dispatchEvent(eventClose)
+    } 
+    function reveilMenu () {
+        menu.classList.add('show')
+        svg.classList.add('show')
+        menu.dispatchEvent(eventOpen)
+    } 
+    
+    setTimeout(() => {
+        menu.style.transition = '.2s all'
+    }, 300)
+</script>
+
+<style>
+    .wrap {
+        height: 4rem;
+        width: 4rem;
+        margin-left: auto;
+        transition: .3s all;
+        cursor: pointer;
+        z-index: 1;
+    }
+    .menu-line {
+        stroke: #000;
+    }
+
+    .svg.show .menu-line {
+        stroke: transparent;
+    }
+    .svg.show  .close-path{
+        stroke: #000;
+    }
+
+    .wrap:hover {
+        background: rgb(var(--accent2));
+    }
+    .svg {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+    }
+    .menu-header {
+        height: 4rem;
+    }
+    .menu {
+        border-left: 1px solid #ddd;
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        translate: 100%;
+    }
+    .menu.show {
+        translate: 0;
+    }
+    .menu-content {
+        padding: 0 2rem 0 1rem;
+
+    }
+</style>

@@ -1,0 +1,40 @@
+---
+import PostListItem from '../components/PostListItem.astro';
+import type { Post } from '../utils/posts'
+import { 
+    pageSize,
+    orderPosts,
+    pagePosts,
+} from '../utils/posts'
+
+type Props = {
+    page?: number
+}
+const {page} = Astro.props
+
+const posts = await Astro.glob<Post>('../pages/blog/*.{mdx,md}')
+const orderedPosts = orderPosts(posts)
+const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1)
+
+---
+
+<div class="p-2 justify-center flex">
+    <div class="wrapper">
+        {pagedPosts.map((x: Post, i: number) => (
+            <PostListItem 
+                title={x.frontmatter.title} 
+                summary={x.frontmatter.summary} 
+                date={x.frontmatter.date}
+                readingTime={x.readingTime.text}
+                isLast={i === (pagedPosts.length - 1)}
+            />
+        ))}
+    </div>
+</div>
+<style>
+    .wrapper {
+        min-width: 66vw
+        
+    }
+</style>
+

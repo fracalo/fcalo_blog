@@ -1,0 +1,32 @@
+---
+import type { Post } from '../utils/posts'
+import Layout from '../layouts/Layout.astro';
+import PostsList from '../components/PostsList.astro'
+import { 
+    pageSize
+} from '../utils/posts'
+
+
+export const getStaticPaths = async () => {
+    const posts = await Astro.glob<Post>('../pages/blog/*.{mdx,md}')
+    const pages = Math.floor(posts.length / pageSize) + 1
+
+    return Array.from({length: pages})
+        .map((_, i) => ({params: {page: i + 1}}))
+}
+
+
+const { page } = Astro.params 
+const pageNumber = Number(page)
+const title = `Blog page ${pageNumber}`
+---
+
+<Layout title={title}>
+	<main>
+		<h1>the page is {page}</h1>
+        <PostsList page={pageNumber} />
+	</main>
+</Layout>
+
+<style>
+</style>
