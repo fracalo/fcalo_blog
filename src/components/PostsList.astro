@@ -6,6 +6,7 @@ import {
     orderPosts,
     pagePosts,
 } from '../utils/posts'
+import Pagination from './Pagination.astro';
 
 type Props = {
     page?: number,
@@ -16,9 +17,8 @@ const posts = await Astro.glob<Post>('../pages/blog/*.{mdx,md}')
 const orderedPosts = orderPosts(posts)
 const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1)
 const totalPages = Math.ceil(posts.length/pageSize)
-const disabledNext = page === totalPages
-const disabledPrev = page === 1
-
+const nextLink = totalPages > page ? new URL(`/${page+1}`, Astro.url) : undefined
+const prevLink = page > 1 ? new URL(`/${page-1}`, Astro.url) : undefined
 ---
 
 <div class="p-2 justify-center flex">
@@ -32,27 +32,7 @@ const disabledPrev = page === 1
                 isLast={i === (pagedPosts.length - 1)}
             />
         ))}
-        <div class='pt-6 flex justify-between items-center'>
-            <p class='text-sm text-gray-800 font-semibold'>Page {page} / {totalPages}</p>
-            <div class="inline-flex">
-                    <button disabled={disabledPrev} class:list={["bg-white hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-l shadow border border-gray-200", 
-                        {
-                          'cursor-not-allowed': disabledPrev,
-                          'opacity-50': disabledPrev,
-                        }
-                    ]} >
-                        Prev
-                    </button>
-                    <button disabled={disabledNext} class:list={["bg-white hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-r shadow border border-l-transparent border-gray-200", 
-                        {
-                          'cursor-not-allowed': disabledNext,
-                          'opacity-50': disabledNext,
-                        }
-                    ]} >
-                    Next
-                  </button>
-            </div>
-        </div>
+        <Pagination page={page} totalPages={totalPages} nextLink={nextLink} prevLink={prevLink} />
     </div>
 </div>
 
