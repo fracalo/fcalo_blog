@@ -8,13 +8,16 @@ import {
 } from '../utils/posts'
 
 type Props = {
-    page?: number
+    page?: number,
 }
-const {page} = Astro.props
+const { page = 1 } = Astro.props
 
 const posts = await Astro.glob<Post>('../pages/blog/*.{mdx,md}')
 const orderedPosts = orderPosts(posts)
 const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1)
+const totalPages = Math.ceil(posts.length/pageSize)
+const disabledNext = page === totalPages
+const disabledPrev = page === 1
 
 ---
 
@@ -29,8 +32,30 @@ const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1)
                 isLast={i === (pagedPosts.length - 1)}
             />
         ))}
+        <div class='pt-6 flex justify-between items-center'>
+            <p class='text-sm text-gray-800 font-semibold'>Page {page} / {totalPages}</p>
+            <div class="inline-flex">
+                    <button disabled={disabledPrev} class:list={["bg-white hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-l shadow border border-gray-200", 
+                        {
+                          'cursor-not-allowed': disabledPrev,
+                          'opacity-50': disabledPrev,
+                        }
+                    ]} >
+                        Prev
+                    </button>
+                    <button disabled={disabledNext} class:list={["bg-white hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-r shadow border border-l-transparent border-gray-200", 
+                        {
+                          'cursor-not-allowed': disabledNext,
+                          'opacity-50': disabledNext,
+                        }
+                    ]} >
+                    Next
+                  </button>
+            </div>
+        </div>
     </div>
 </div>
+
 <style>
     .wrapper {
         min-width: 66vw
