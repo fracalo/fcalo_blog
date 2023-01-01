@@ -6,7 +6,11 @@ import Menuicon from './Menuicon.astro'
 
 <nav class='navbar flex align-center'>
     <div class='flex flex-col justify-center'>
-        <h1 class='p-2 px-6 text-xl'>Outskirt Dev</h1>
+        <a
+            href={Astro.url.origin}
+        >
+            <h1 class='p-2 px-6 text-xl'>Outskirt Dev</h1>
+        </a>
     </div>
     <Menuicon />
 </nav>
