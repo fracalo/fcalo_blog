@@ -13,7 +13,7 @@ type Props = {
 }
 const { page = 1 } = Astro.props
 
-const posts = await Astro.glob<Post>('../pages/blog/*.{mdx,md}')
+const posts = await Astro.glob<Post>('../pages/blog/**/*.{mdx,md}')
 const orderedPosts = orderPosts(posts)
 const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1)
 const totalPages = Math.ceil(posts.length/pageSize)
@@ -21,25 +21,15 @@ const nextLink = totalPages > page ? new URL(`/${page+1}`, Astro.url) : undefine
 const prevLink = page > 1 ? new URL(`/${page-1}`, Astro.url) : undefined
 ---
 
-<div class="p-2 justify-center flex">
-    <div class="wrapper">
-        {pagedPosts.map((x: Post, i: number) => (
-            <PostListItem 
-                title={x.frontmatter.title} 
-                summary={x.frontmatter.summary} 
-                date={x.frontmatter.date}
-                readingTime={x.readingTime.text}
-                isLast={i === (pagedPosts.length - 1)}
-            />
-        ))}
-        <Pagination page={page} totalPages={totalPages} nextLink={nextLink} prevLink={prevLink} />
-    </div>
-</div>
-
-<style>
-    .wrapper {
-        min-width: 66vw
-        
-    }
-</style>
+{pagedPosts.map((x: Post, i: number) => (
+    <PostListItem 
+        title={x.frontmatter.title} 
+        summary={x.frontmatter.summary} 
+        date={x.frontmatter.date}
+        readingTime={x.readingTime?.text}
+        isLast={i === (pagedPosts.length - 1)}
+        url={new URL(x.url!, Astro.url)}
+    />
+))}
+<Pagination page={page} totalPages={totalPages} nextLink={nextLink} prevLink={prevLink} />
 

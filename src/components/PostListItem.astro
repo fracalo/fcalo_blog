@@ -5,8 +5,9 @@ type Props = {
     date: string;
     readingTime: string;
     isLast: boolean;
+    url: URL
 }
-const { title, summary, date, readingTime, isLast } = Astro.props
+const { title, summary, date, readingTime, isLast, url } = Astro.props
 
 let formattedDate = null
 if (date) {
@@ -16,9 +17,11 @@ if (date) {
 ---
 
 <article>
-    <h2 class='title'>
-        { title }
-    </h2>
+    <a href={url}>
+        <h2 class='title'>
+            { title }
+        </h2>
+    </a>
     <div class='flex justify-between text-sm'>
         <p>{formattedDate}</p>
         <p>{readingTime}</p>

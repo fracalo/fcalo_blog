@@ -31,7 +31,16 @@ const mappedPosts = (posts: Posts) : Posts =>
         return x
     })
 
+const getFormattedDate = (date: string) : null | string => {
+    let formattedDate = null
+    if (date) {
+        const [_, month, day, year] = new Date(date).toDateString().split(' ')
+        formattedDate = `${month} ${Number(day)}, ${year}`
+    }
+    return formattedDate
+}
 
 const pageSize = VITE_PAGE_SIZE
 
-export { pageSize, pagePosts, orderPosts, mappedPosts, Post }
+export type { Post }
+export { pageSize, pagePosts, orderPosts, mappedPosts, getFormattedDate }
