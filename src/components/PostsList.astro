@@ -13,7 +13,13 @@ type Props = {
 }
 const { page = 1 } = Astro.props
 
-const posts = await Astro.glob<Post>('../pages/blog/**/*.{mdx,md}')
+let posts = []
+try {
+    posts = await Astro.glob<Post>('../pages/blog/**/*.{mdx,md}')
+}
+catch (e) {
+    console.log(e)
+}
 const orderedPosts = orderPosts(posts)
 const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1)
 const totalPages = Math.ceil(posts.length/pageSize)
