@@ -17,6 +17,8 @@
 </menu>
 
 <script>
+    import { menuStore } from '../store/menuStore.ts'
+
     const lsKey = 'od-menuState'
     let menuState = (window.sessionStorage.getItem(lsKey) || 'close') as 'open' | 'close' 
     let open = menuState === 'open'
@@ -24,8 +26,6 @@
     const menu = document.querySelector('.menu') as HTMLElement
     const svg = document.querySelector('.svg') as HTMLElement
 
-    const eventClose = new Event('menuStateClose')
-    const eventOpen = new Event('menuStateOpen')
     setMenuState()
 
     wrap.addEventListener('click', () => { 
@@ -46,12 +46,12 @@
     function closeMenu () {
         menu.classList.remove('show')
         svg.classList.remove('show')
-        menu.dispatchEvent(eventClose)
+        menuStore.set('close')
     } 
     function reveilMenu () {
         menu.classList.add('show')
         svg.classList.add('show')
-        menu.dispatchEvent(eventOpen)
+        menuStore.set('open')
     } 
     
     setTimeout(() => {

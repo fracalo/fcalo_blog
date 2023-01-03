@@ -44,16 +44,15 @@ const formattedDate = getFormattedDate(date)
 	</body>
 </html>
 <script>
-
-    const menu = document.querySelector('.menu') as HTMLElement
+    import { menuStore } from '../store/menuStore.ts'
+    
     const mainWrapper = document.querySelector('.main-wrapper') as HTMLElement
+    const menu = document.querySelector('.menu') as HTMLElement
     const menuWidth = menu.getBoundingClientRect().width
-    menu.addEventListener('menuStateClose',  () => {
-        mainWrapper.style.marginRight = 'initial'
+    const unsub = menuStore.subscribe(v=> {
+        mainWrapper.style.marginRight = v === 'open' ? `${menuWidth}px` : 'initial'
     })
-    menu.addEventListener('menuStateOpen',  () => {
-        mainWrapper.style.marginRight = `${menuWidth}px`
-    })
+
 </script>
 <style>
     .title {
