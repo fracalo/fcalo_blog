@@ -40,12 +40,33 @@ body {
     overflow-y: auto;
 }
 .content-wrapper {
-    min-width: 66vw
+    width: 66vw
     
 }
 
 code {
 	font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
 		Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
+.blog-article h2 {
+    font-weight: 800;
+    font-size: 1.8rem;
+    padding-bottom: .3rem;
+}
+.blog-article h3 {
+    font-weight: 700;
+    font-size: 1.6rem;
+    padding-bottom: .25rem;
+}
+.blog-article h4 {
+    font-weight: 600;
+    font-size: 1.4rem;
+    padding-bottom: .2rem;
+}
+.blog-article h5 {
+    font-weight: 500;
+    font-size: 1.2rem;
+    padding-bottom: .15rem;
 }
 
