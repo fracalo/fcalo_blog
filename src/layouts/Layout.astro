@@ -1,4 +1,5 @@
 ---
+import GlobalLayout from './GlobalLayout.astro'
 import Navbar from '../components/Navbar.astro'
 import '../css/styles.css'
 
@@ -9,35 +10,11 @@ export interface Props {
 const { title } = Astro.props;
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
-		<meta name="generator" content={`${Astro.generator} and me`} />
-		<title>{title}</title>
-	</head>
-	<body>
-        <Navbar />
-        <div class='main-wrapper'>
-            <div class="p-2 justify-center flex">
-                <div class="content-wrapper">
-		            <slot />
-                </div>
-            </div>
-        </div>
-	</body>
-</html>
-<script>
 
-    const menu = document.querySelector('.menu') as HTMLElement
-    const mainWrapper = document.querySelector('.main-wrapper') as HTMLElement
-    const menuWidth = menu.getBoundingClientRect().width
-    menu.addEventListener('menuStateClose',  () => {
-        mainWrapper.style.marginRight = 'initial'
-    })
-    menu.addEventListener('menuStateOpen',  () => {
-        mainWrapper.style.marginRight = `${menuWidth}px`
-    })
-</script>
+<GlobalLayout title={title}>
+    <div class="p-2 justify-center flex">
+        <div class="content-wrapper">
+            <slot />
+        </div>
+    </div>
+</GlobalLayout

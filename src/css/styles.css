@@ -36,8 +36,8 @@ body {
 }
 
 .main-wrapper {
-    transition: .25s all;
     overflow-y: auto;
+    transition: .2s all;
 }
 .content-wrapper {
     width: 66vw

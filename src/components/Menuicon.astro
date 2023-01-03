@@ -1,4 +1,10 @@
 ---
+const menuRoutes = [
+    {
+        text: "About",
+        url: "/blog/about"
+    }
+]
 ---
 
 <div class='wrap'>
@@ -11,8 +17,12 @@
 <menu class='menu'>
  <div class='menu-header'></div>
  <div class='menu-content'> 
-    <ul>About</ul>
-    <ul>Postcards</ul>
+    {menuRoutes.map(x => (
+        <a href={new URL(x.url, Astro.url)}>
+            <ul class='pt-4'>{x.text}</ul>
+        </a>
+    ))}
+        
  </div>
 </menu>
 
@@ -54,9 +64,6 @@
         menuStore.set('open')
     } 
     
-    setTimeout(() => {
-        menu.style.transition = '.2s all'
-    }, 300)
 </script>
 
 <style>
@@ -71,7 +78,6 @@
     .menu-line {
         stroke: #000;
     }
-
     .svg.show .menu-line {
         stroke: transparent;
     }
@@ -99,12 +105,12 @@
         bottom: 0;
         right: 0;
         translate: 100%;
+        transition: .2s all;
     }
     .menu.show {
         translate: 0;
     }
     .menu-content {
         padding: 0 2rem 0 1rem;
-
     }
 </style>

@@ -1,0 +1,33 @@
+---
+import '../css/styles.css'
+import Navbar from '../components/Navbar.astro'
+
+const { title } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<meta name="generator" content={`${Astro.generator} and me`} />
+		<title>{title}</title>
+	</head>
+	<body>
+        <Navbar />
+        <div class='main-wrapper'>
+            <slot>
+        </div>
+	</body>
+</html>
+<script>
+    import { menuStore } from '../store/menuStore.ts'
+    
+    const mainWrapper = document.querySelector('.main-wrapper') as HTMLElement
+    const menu = document.querySelector('.menu') as HTMLElement
+    const menuWidth = menu.getBoundingClientRect().width
+    const unsub = menuStore.subscribe(v=> {
+        mainWrapper.style.marginRight = v === 'open' ? `${menuWidth}px` : 'initial'
+    })
+
+</script>

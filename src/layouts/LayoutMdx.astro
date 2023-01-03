@@ -1,57 +1,40 @@
 ---
 import type { Post as Props } from '../utils/posts'
 import { getFormattedDate } from '../utils/posts'
-import Navbar from '../components/Navbar.astro'
-import '../css/styles.css'
-
+import GlobalLayout from './GlobalLayout.astro'
 
 export type { Props }
 
 const { frontmatter, readingTime } = Astro.props;
 const { title, date } = frontmatter
-//console.log('Astro.props are ' , Astro.props)
-
 const formattedDate = getFormattedDate(date)
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
-		<meta name="generator" content={`${Astro.generator} and me`} />
-		<title>{title}</title>
-	</head>
-	<body>
-        <Navbar />
-        <div class='main-wrapper'>
-            <article class="blog-article p-2 pt-6 justify-center flex">
-                <div class="content-wrapper">
-                    <h1 class='title'>
-                        { title }
-                    </h1>
-                    <div class='flex justify-between text-sm'>
-                        <p>{formattedDate}</p>
-                        <p>{readingTime?.text}</p>
-                    </div>
-                    <div class='pt-8'>
-		                <slot />
-                    </div>
-                </div>
-            </article>
+<GlobalLayout title={title}>
+    <article class="blog-article p-2 pt-6 justify-center flex">
+        <div class="content-wrapper">
+            <h1 class='title'>
+                { title }
+            </h1>
+            <div class='flex justify-between text-sm'>
+                <p>{formattedDate}</p>
+                <p>{readingTime?.text}</p>
+            </div>
+            <div class='pt-8'>
+                <slot />
+            </div>
         </div>
-	</body>
-</html>
+    </article>
+</GlobalLayout>
 <script>
-    import { menuStore } from '../store/menuStore.ts'
-    
-    const mainWrapper = document.querySelector('.main-wrapper') as HTMLElement
-    const menu = document.querySelector('.menu') as HTMLElement
-    const menuWidth = menu.getBoundingClientRect().width
-    const unsub = menuStore.subscribe(v=> {
-        mainWrapper.style.marginRight = v === 'open' ? `${menuWidth}px` : 'initial'
-    })
+    //import { menuStore } from '../store/menuStore.ts'
+    //
+    //const mainWrapper = document.querySelector('.main-wrapper') as HTMLElement
+    //const menu = document.querySelector('.menu') as HTMLElement
+    //const menuWidth = menu.getBoundingClientRect().width
+    //const unsub = menuStore.subscribe(v=> {
+    //    mainWrapper.style.marginRight = v === 'open' ? `${menuWidth}px` : 'initial'
+    //})
 
 </script>
 <style>
