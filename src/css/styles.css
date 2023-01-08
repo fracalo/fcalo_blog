@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-	--accent: 124, 58, 237;
+	/*--accent: 124, 58, 237;*/
 	--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
 
-    --accent2: 244, 60, 60;
+    --accent: 244, 60, 60;
     --accent-light: 201, 234, 219;
     --dark: 5, 23, 53;
 	--background: 249, 251, 253;
-
+    --color-border-muted: hsla(210,18%,87%,1);
     /*
         --accent2: #f43c3d;
         --accent-light: #c9eadc;
@@ -37,7 +37,7 @@ body {
 
 .main-wrapper {
     overflow-y: auto;
-    transition: .2s all;
+    visibility: hidden;
 }
 .content-wrapper {
     width: 66vw
@@ -49,24 +49,88 @@ code {
 		Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
+.post-title {
+    color: rgb(var(--accent));
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1.15;
+}
+
 .blog-article h2 {
     font-weight: 800;
     font-size: 1.8rem;
-    padding-bottom: .3rem;
+    padding-bottom: .7em;
+    padding-top: 1em;
+    border-bottom: 1px solid var(--color-border-muted);
 }
 .blog-article h3 {
     font-weight: 700;
     font-size: 1.6rem;
-    padding-bottom: .25rem;
+    padding-bottom: .5rem;
+    padding-top: .8rem;
 }
 .blog-article h4 {
     font-weight: 600;
     font-size: 1.4rem;
-    padding-bottom: .2rem;
+    padding-bottom: .4rem;
+    padding-top: .7rem;
 }
 .blog-article h5 {
     font-weight: 500;
     font-size: 1.2rem;
-    padding-bottom: .15rem;
+    padding-bottom: .7rem;
+    padding-top: .35rem;
 }
 
+.blog-article hr {
+    margin: 1rem 0 1rem;
+}
+
+.blog-article ul {
+    margin-left: 1.58rem;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    margin-bottom: 1.58rem;
+    list-style-position: outside;
+    list-style-image: none;
+    list-style: disc;
+}
+
+.blog-article li {
+    display: list-item;
+    margin-bottom: .79rem;
+}
+.blog-article p {
+    margin-bottom: .79rem;
+}
+.blog-article a {
+    color: rgb(var(--accent));
+    text-decoration: overline;
+}
+.blog-article blockquote {
+    border-left: .3rem solid rgb(var(--accent));
+    padding-left: 1rem;
+    font-size: 1.2rem;
+    font-style: italic;
+    position: relative;
+    overflow: visible;
+
+}
+/*
+.blog-article blockquote:after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid rgb(var(--accent));
+}
+*/

@@ -18,9 +18,13 @@ const menuRoutes = [
  <div class='menu-header'></div>
  <div class='menu-content'> 
     {menuRoutes.map(x => (
-        <a href={new URL(x.url, Astro.url)}>
-            <ul class='pt-4'>{x.text}</ul>
-        </a>
+        <ul class='pt-4'>
+            <li>
+                <a href={new URL(x.url, Astro.url)}>
+                    {x.text}
+                </a>
+            </li>
+        </ul>
     ))}
         
  </div>
@@ -64,6 +68,12 @@ const menuRoutes = [
         menuStore.set('open')
     } 
     
+    setTimeout(() => {
+        menu.style.transition = '.2s all'
+        menu.style.visibility = 'visible'
+        svg.style.visibility = 'visible'
+    },100)
+
 </script>
 
 <style>
@@ -93,6 +103,7 @@ const menuRoutes = [
         z-index: 1;
         height: 100%;
         width: 100%;
+        visibility: hidden;
     }
     .menu-header {
         height: 4rem;
@@ -105,7 +116,7 @@ const menuRoutes = [
         bottom: 0;
         right: 0;
         translate: 100%;
-        transition: .2s all;
+        visibility: hidden;
     }
     .menu.show {
         translate: 0;

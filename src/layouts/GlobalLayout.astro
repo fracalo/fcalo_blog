@@ -2,7 +2,12 @@
 import '../css/styles.css'
 import Navbar from '../components/Navbar.astro'
 
-const { title } = Astro.props;
+type Props = {
+    title: string,
+    description: string | undefined
+}
+
+const { title, description } = Astro.props;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -11,6 +16,7 @@ const { title } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<meta name="generator" content={`${Astro.generator} and me`} />
+		<meta name="description" content={`${Astro.generator} and me`} />
 		<title>{title}</title>
 	</head>
 	<body>
@@ -21,13 +27,19 @@ const { title } = Astro.props;
 	</body>
 </html>
 <script>
-    import { menuStore } from '../store/menuStore.ts'
+    import { menuStore, MenuStoreStates  } from '../store/menuStore.ts'
+
     
     const mainWrapper = document.querySelector('.main-wrapper') as HTMLElement
     const menu = document.querySelector('.menu') as HTMLElement
     const menuWidth = menu.getBoundingClientRect().width
-    const unsub = menuStore.subscribe(v=> {
+    menuStore.subscribe((v: MenuStoreStates)=> {
         mainWrapper.style.marginRight = v === 'open' ? `${menuWidth}px` : 'initial'
     })
+    
+    setTimeout(() => {
+        mainWrapper.style.transition = '.2s all'
+        mainWrapper.style.visibility = 'visible'
+    },100)
 
 </script>

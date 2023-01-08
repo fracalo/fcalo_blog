@@ -13,7 +13,7 @@ const formattedDate = getFormattedDate(date)
 <GlobalLayout title={title}>
     <article class="blog-article p-2 pt-6 justify-center flex">
         <div class="content-wrapper">
-            <h1 class='title'>
+            <h1 class='post-title'>
                 { title }
             </h1>
             <div class='flex justify-between text-sm'>
@@ -26,20 +26,3 @@ const formattedDate = getFormattedDate(date)
         </div>
     </article>
 </GlobalLayout>
-<script>
-    //import { menuStore } from '../store/menuStore.ts'
-    //
-    //const mainWrapper = document.querySelector('.main-wrapper') as HTMLElement
-    //const menu = document.querySelector('.menu') as HTMLElement
-    //const menuWidth = menu.getBoundingClientRect().width
-    //const unsub = menuStore.subscribe(v=> {
-    //    mainWrapper.style.marginRight = v === 'open' ? `${menuWidth}px` : 'initial'
-    //})
-
-</script>
-<style>
-    .title {
-        color: rgb(var(--accent2));
-        font-size: 2rem;
-    }
-</style>

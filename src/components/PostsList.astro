@@ -13,7 +13,7 @@ type Props = {
 }
 const { page = 1 } = Astro.props
 
-let posts = []
+let posts: Array<Post> = []
 try {
     posts = await Astro.glob<Post>('../pages/blog/**/*.{mdx,md}')
 }

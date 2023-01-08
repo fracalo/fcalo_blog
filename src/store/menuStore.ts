@@ -1,4 +1,6 @@
 
 import { atom } from 'nanostores'
 
-export const menuStore = atom<'open'|'close'>('open')
+export type MenuStoreStates = 'open'|'close'
+
+export const menuStore = atom<MenuStoreStates>('open')
