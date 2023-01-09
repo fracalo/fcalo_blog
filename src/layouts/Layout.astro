@@ -1,20 +1,20 @@
 ---
 import GlobalLayout from './GlobalLayout.astro'
-import Navbar from '../components/Navbar.astro'
 import '../css/styles.css'
 
 export interface Props {
 	title: string;
+    description: string | undefined;
 }
 
-const { title } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 
-<GlobalLayout title={title}>
+<GlobalLayout title={title} description={description}>
     <div class="p-2 justify-center flex">
         <div class="content-wrapper">
             <slot />
         </div>
     </div>
-</GlobalLayout
+</GlobalLayout>

@@ -92,7 +92,7 @@ const menuRoutes = [
         stroke: transparent;
     }
     .svg.show  .close-path{
-        stroke: #000;
+        stroke: #fff;
     }
 
     .wrap:hover {
@@ -107,6 +107,7 @@ const menuRoutes = [
     }
     .menu-header {
         height: 4rem;
+        border-bottom: 1px solid #fff;
     }
     .menu {
         border-left: 1px solid #ddd;
@@ -117,6 +118,9 @@ const menuRoutes = [
         right: 0;
         translate: 100%;
         visibility: hidden;
+        min-width: 10rem;
+        background: rgb(var(--dark));
+        color: #fff;
     }
     .menu.show {
         translate: 0;

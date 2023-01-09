@@ -6,18 +6,19 @@ import GlobalLayout from './GlobalLayout.astro'
 export type { Props }
 
 const { frontmatter, readingTime } = Astro.props;
-const { title, date } = frontmatter
+const { title, date, summary } = frontmatter
 const formattedDate = getFormattedDate(date)
 ---
 
-<GlobalLayout title={title}>
+<GlobalLayout title={title} description={summary}>
     <article class="blog-article p-2 pt-6 justify-center flex">
         <div class="content-wrapper">
             <h1 class='post-title'>
                 { title }
             </h1>
-            <div class='flex justify-between text-sm'>
-                <p>{formattedDate}</p>
+            <div class='flex text-md text-gray-500 my-2'>
+                <p class='pr-2'>{formattedDate}</p>
+                {readingTime && <p class='pr-2'>~</p>}
                 <p>{readingTime?.text}</p>
             </div>
             <div class='pt-8'>

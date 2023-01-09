@@ -22,12 +22,12 @@ if (date) {
             { title }
         </h2>
     </a>
-    <div class='flex text-sm'>
+    <div class='flex text-md text-gray-500 my-2'>
         <p class='pr-2'>{formattedDate}</p>
         <p class='pr-2'>~</p>
         <p>{readingTime}</p>
     </div>
-    <div class='text-lg font-semibold'> { summary } </div>
+    <div class='text'> { summary } </div>
     {!isLast && <hr class='border-transparent mt-6 mb-4' />}
 </article>
 
