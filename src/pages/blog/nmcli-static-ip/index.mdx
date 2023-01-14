@@ -1,0 +1,38 @@
+---
+title: Setting a static ip in nmcli 
+date: '2019-04-25T14:49:03.284Z'
+category: [linux, networking]
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+By default nmcli (NewtworkManager cli) will try to obtain the ip with DHCP, and that's fine,
+but if you want to set a static ip here's how:
+
+### 1. Check the current ip/gateway address in use  
+`ip addr show <dev>` for ip/subnet.  
+And `ip route` to know the gateway.
+
+This is all the information that will be needed for configuring your static network connection.
+
+
+### 2. Discover where your current conf settings are
+In contrast to traditional deb-sys network configuration  
+(which is stored in `/etc/network/interfaces`),  
+_NetworkManager_ connection conf can be found in `/etc/NetworkManager/system-connections`.  
+There are many Gui tools that you can use to interact with configuration, but in the end it's these file that contain the information so we'll just edit these.
+
+With `nmcli dev` you can see which device is connected, and the last column indicates the name of the file which stores the config  
+(relative to `/etc/NetworkManager/system-connections`).
+
+
+### 3. Changing the settings 
+In the file you have identified in the previous step find the `ipv4` section,  
+change method from `auto` to `manual`,  
+add an entry with ip, subnet, gateway (info from step 1):  
+`address1=<ip>/<range>,<gateway>`  
+(mine looks like this `address1=192.168.42.18/24,192.168.42.1`) .
+
+
+And now if you restart network manager you should be connecting through your statically assigned ip.
+
+If you compare the output of `ip addr show <dev>` from the one you had in step1, you should notice the absence of the flag `dynamic` in the ipv4 section.

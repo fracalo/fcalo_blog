@@ -1,0 +1,65 @@
+---
+title: Gitlab Runner 101
+date: '2019-08-20T22:40:32.169Z'
+summary: How to build a deployment pipeline.
+category: [linux, CI, dev-ops]
+layout: ../../../layouts/LayoutMdx.astro
+---
+import { Image } from '@astrojs/image/components'
+import gitlabRunnerRegister from './gitlab-runner-img.png'
+
+
+Using tools to facilitate and maintain a project is usually a primary issue.  
+If you have some experience with linux it is quite easy to set up a CI pipeline, in fact the easiest setup I've found is to use a gitlab-runner process hooked up to a gitlab server, so whenever you push to a defined branch the server will notify the runner and the procedure will run.
+
+This setup relies on a linux server (here we use Ubuntu 18.04 ami) and a Gitlab.com account, but you can use any gitlab version or linux OS.
+
+### Here we go:
+
+1. On the server create a ssh key with `ssh-keygen`, we'll use this to enable authorization and pull from the gitlab server(do not add a password).
+
+2. Copy the newly create `id_rsa.pub` key into gitlab.com `Settings->Repository->Deploy Keys`.
+
+3. Install gitlab-runner on our Ubuntu server:
+    - Add the official repo:  
+    `curl -L https://packages.gitlab.com/install/repositories/
+    runner/gitlab-runner/script.deb.sh | sudo bash`.
+    - Install the pkg `sudo apt-get install gitlab-runner`.
+4. On the Ubuntu server you should have a clone of the project, with the optimal production configuration, this should be the goal of our pipeline (the last stage of our pipe should build the project in this same state).
+
+5. Disable all the other runners that you may find already registered on your project (NB: on gitlab.com, by default, there are some which will override your custom one if not disabled).
+
+6. Register the runner on our server with `gitlab-runner register`;  
+when asked take the parameters for `coordinator` and `token` from the gitlab server, you can use the default for every other parameter, but use `shell` as the executor.  
+We will do this in user mode because we've given a user access to the repo with ssh key created in step 2.
+<Image src={gitlabRunnerRegister} alt='request animation from'/>
+
+7. For the runner to react to any change we'll need the process to be up, the easiest way to do this is  with `tmux`;  
+  so open a tmux shell, `gitlab-runner run` and woilà!!  
+  You can detach tmux with `<leader> + d` (If you haven't aliased it tmux `<leader>` key is CTRL-b; in case you want to reattach it `tmux a`).
+
+8. Then you'll need a `.gitlab-ci.yml` configuration file in the root of your project, here's my example:
+```yaml
+  stages:
+    - deploy
+  
+    master:
+     stage: deploy
+     environment:
+       name: production 
+     only:
+       - master
+     script:
+       - cd ~/www/cloned-repo
+       - git checkout master
+       - git pull 
+       - npm run build
+```
+With this config every time you push on master the commands specified in the script portion will run sequentially.  
+Here we're building a node app, and since the distribution folder that's created is already served by our server we're done.
+
+And now that you've got your CI pipeline setup, the deploy stage is set up, procrastination is over, you just need to develop...
+
+
+  
+

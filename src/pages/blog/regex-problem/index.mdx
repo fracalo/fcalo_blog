@@ -1,0 +1,45 @@
+---
+title: Regexes, where is the problem?
+date: '2019-01-20T22:12:03.284Z'
+category: [programming]
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+There is a famous regex quote that I've ran into a lot lately:
+
+> Some people, when confronted with a problem, think  
+> “I know, I'll use regular expressions.”  Now they have two problems.
+
+This phrase was said by __Jamie Zawinski__, it became so popular that eventually programmers started to use it as a dogma, [on Jeffry Friedl's blog you can find some context on its origin](http://regex.info/blog/2006-09-15/247).
+
+Since this gave me some thinking I want to put my 2 cents on this argument.
+
+Regex is a tool for finding patterns in words and eventually modifying this patters with other words.
+So if you're either grepping through log files, checking some xml attribute to match a pattern, or anything like this it's absolutely the most convenient tool.
+
+But this subject inspired me a more general reasoning.  
+Programmers build software to resolve specific problems, softwares themselves are tools.  
+We rely on tools in development to make the process of building easier and more enjoyable.  
+The languages we use are interpreted in ways to give them some meaning, without parsing these would be useless, and these too are tools.  
+And all this is an example of job modularization.
+
+When you solve problems one of the main activities is to split the issues into small blocks, and this is the way programmers usually approach their work;  
+dividing large topics into many smaller has lots of advantages, it becomes easier and maybe associable to something that you have already covered.  
+Since strings are one of the most unpredictable inputs you can get,
+doing complex character manipulation in one step (as regex permits you to do) easily attracts critics.
+
+Seen in this specific perspective regular expression is a low-level tool to approach a high level task,   
+you can solve the issue but mostly won't get to reuse what you wrote,   
+you're adding a dead-end to your codebase for an 'ad-hoc' case.  
+Generally, when designing an application, this is something you want to avoid.  
+Caring for the architecture to be maintainable, clean, and extensible,
+keeps technical debt low, on the long run that's something valuable.
+
+But on the other side there are places where regular expression are invaluable,  
+and fit perfectly in the application structure so without context it's hard to really take a part.
+
+In conclusion this is something more general than just regexes,  
+there __always__ is a better alternative solution,  
+it may sometimes not be worth it,  
+but it's good to keep in mind that there is.
+

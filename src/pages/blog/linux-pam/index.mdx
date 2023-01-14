@@ -1,0 +1,57 @@
+---
+title: Pluggable Authentication Module
+date: '2019-08-05T23:23:49.284Z'
+summary: Outsourcing your auth from your app to your OS.
+category: [linux]
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+PAM is the standard module used by application for delegating authentication to the linux system credentials.
+
+The steps involved in this type of auth are:
+  - The pam aware application invokes `libpam`
+  - Configuration files in `/etc/pam.d/` are checked, inside configuration other pam modules may be defined.
+  - The declared modules are used in accordance to the rules specified in the config file.
+
+The rules are specified in a space separated token list in the format:
+`type control module-path module-args` 
+
+#### `type` specifies the management group
+Which can be one of:
+ - **auth** instructs the application to prompt the user for identification (username, pass, etc).
+   May set credentials and grant privileges.
+ - **account** checks on aspects of the user's account, such as pass aging, access control, etc.
+ - **password** responsible for updating the user auth token, usually a password.
+ - **session** used to provide functions before and after the session is established(such as setting up environment, logging, etc.). 
+
+
+#### `control` flag controls how the success or failure of a module
+Affects the overall authentication process:
+ - **required** must return success for the service to be granted.
+If part of the stack, of all the modules are still executed. Application is not told which module or modules failed.
+ - **requisite** same as required, except any module terminates the stack and a return status is sent to the application (less permissive than required).
+ - **optional** Module is not required. If it is the only module, then its return status to application may cause failure.
+ - **sufficient** if the module succeeds, then no subsequent modules in the stack are executed. If it fails, then it doesn't necessarily cause the stack to fail, unless it is the only one in the stack.
+There are other control flags, such as include and substack... (check `man pam.d`).
+
+#### `module-path` gives the file name of the library to be found in `/lib*/security`, in either absolute or relative path.
+
+#### `module-args` can be given to modify the PAM module behavour.
+
+## What can you do with PAM?
+Since many services do authentication through pam you can configure the specific authentication behavior of any of these,
+check out what's inside `/etc/pam.d`;  
+let's choose the `sshd` configuration file (this controls how pam plugs into the ssh server).
+
+Try adding `auth required pam_tally2.so deny=4 onerr=fail` near the top of the file (so it won't get overridden),  
+and then add the tally module in the module section (`account required pam_tally2.so`).
+
+Now try failing some ssh logins;  
+once you've done that you can check the error count with `tally2_pam -u <user>`.
+
+And if you want to reset it you can do so with `tally2_pam -u <user> -r`.
+
+So next time you need to configure a specific authentication pattern...  
+Remember, PAM is your friend!
+
+

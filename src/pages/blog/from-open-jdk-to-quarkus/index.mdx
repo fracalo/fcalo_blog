@@ -1,0 +1,217 @@
+---
+title: From open-jdk to quarkus
+date: '2022-02-26T11:18:03.284Z'
+category: [programming, java, quarkus, containers, micro-services]
+layout: ../../../layouts/LayoutMdx.astro
+summary: |
+    Just my personal experience with Quarkus: the Supersonic,  
+    Subatomic Java future proof framework.
+---
+import erdUml from './erd-uml.png'
+import intellij_newProj from './intellij_newProj.png'
+import autocannonOut from './autocannon-out.png'
+import { Image } from '@astrojs/image/components'
+
+
+### Why I am writing this...
+I've been developing in java a lot more then I expected some months ago,  
+the project I've worked on lately is a micro-service architecture app,  
+with a lot Java8/11 services,   
+which get deployed in containers with open-jdk as the base image.  
+The main problems the team had to face in this scenario was about performance caused by the jre inside a docker container.  
+
+When Java came out around 1995 one of its selling points was  
+_"write once, run everywhere"_,  
+the JVM was built with that goal in mind, giving a portable environment to the program,
+and this is certainly one of the key factors of Java's success.
+
+Nowadays, the defacto standard for solving the portability issue are containers.  
+Leveraging Linux namespaces/kernel, it is possible to pack the program, runtime and dependencies, in an efficient and easy to consume format.  
+There are many factors which have brought containers to become the most popular unit of work when building custom micro-services: devOps practices, small footprint, Linux overtaking the server world, etc.;  
+these are some of the reasons it is one of the most important blocks in [CNCF landscape](https://landscape.cncf.io/card-mode?category=container-runtime&grouping=category).  
+
+
+### The issue
+The original JVM and containers overlap in scope, and due to the legacy structure of open-jdk, it doesn't fit well inside a container.  
+This problem fortunately has already been addressed by RedHat,  
+The solution is [Quarkus](https://en.wikipedia.org/wiki/Quarkus), a container first Java runtime.
+
+
+
+-----
+
+So to demo how Qaurkus works I'll develop something...  
+What we'll build is a REST micro-service that will provide translation functionalities to consuming services.  
+The service can host multiple dictionaries, a given translation is placed in a dictionary, a dictionary may contain many translations.  
+
+<Image src={erdUml} alt='request animation from'/>
+
+We'll touch the following topics along the way:  
+
+ - Basic scaffolding 
+ - Testing and debugging
+ - Data layer integration/migrations
+ - Packaging
+
+
+### Basic scaffolding 
+This is quite easy, Quarkus has been built from the ground with the primary focus of providing a delightful developer experience.  
+For convenience I'll use Intellij, but there is also a cli and [tools for  other IDEs as well](https://quarkus.io/guides/ide-tooling).
+
+
+In the Intellij panel we start up a project with Qaurkus and Java11 as runtime, as for the dependency I've included only "Reactive Routes" and "RESTEasy Jackson" to start:
+
+<Image src={intellij_newProj} alt='Intellij scaffolding'/>
+
+Our pom's dependencies now includes  `quarkus-resteasy, quarkus-resteasy-jackson, quarkus-reactive-routes, quarkus-arc, quarkus-junit5, rest-assured`,
+
+Launch `mvn quarkus:dev` and you have a running hot reload environment ready to go at [localhost:8080](http://localhost:8080).  
+During configuration I selected code example so I also get a preconfigured GET endpoint at `/hello`.   
+But this is not reactive!! Let's refactor the ExampleResource class to TranslatorCtrl and change the file content to:
+
+
+```java
+@ApplicationScoped
+public class TranslatorCtrl {
+
+    @Route(path = "hello")
+    public String hello() {
+        return "hello";
+    }
+
+    @Route(methods = Route.HttpMethod.GET, path = "hello-through-ctx")
+    public void hello(RoutingContext rc) {
+        rc.response().end("hello twice");
+    }
+
+    @Route(methods = Route.HttpMethod.GET, path = "hello-through-exchange")
+    public void hello(RoutingExchange ex) {
+        var paramName = ex.getParam("name").orElse("Stranger");
+        ex.ok("hello, this looks lots like express.js, paramName is " + paramName);
+    }
+}
+```
+
+This is quite basic.  
+
+I'll refactor the class containing our ExampleController to  `TranslatorCtrl`, so also test references will be affected.
+
+
+### Testing and debugging
+In our scaffolding we already have some testing facilities, lets put them to work.
+Running `TranslatorCtrlTest` you'll see it fail, and in TDD, having the first test to fail, is the first step towards quality software XD;  
+anyway, this is and easy fix, change the return to `hello` and the test will pass.
+
+In the testing folder you'll also notice another class, `NativeTranslatorCtrlIT`, this is used to run tests with the native build, we won't use it for now.
+
+
+Debugging is a big part of any efficient development environment.   
+With Intellij this is as easy as attaching a debugger to the running process.  
+Pressing the shortcut CTR-ALT-5 will bring up a modal to do that, choose the correct process, and you're done;
+if you now set a breakpoint in the hello method and call that route you'll have a working debug context.
+
+__You can find the code up to this point at this specific [commit.](https://github.com/fracalo/translator/tree/fd5fa9692aeb5e69575e15ccd60dec4017d2d448)__
+
+
+
+### Data layer integration/migrations
+Now we should start to persist something to the db, for this we'll run a postgres db locally using a container,  
+I'll also run [adminer](https://www.adminer.org/) db client for interacting with the db directly (in case you need it's [localhost:8888](http://localhost:8888)),  
+The repo contains a docker-compose with all pieces in the right place,  
+with `docker-compose up -d` you're up.
+
+
+To access the db we'll need to add `quarkus-hibernate-orm` and `quarkus-jdbc-postgresql` as dependencies,  
+I've chose to use hibernated directly but you could also implement the active-directory pattern with [panache](https://quarkus.io/guides/hibernate-orm-panache).  
+
+
+In order to make this work we create the entities with all the proper hibernate annotations,  
+these are quite intuitive, below you can find the heading of the `TranslationCategory` entity.
+
+
+```java
+@Entity
+@Getter
+@Setter
+@NamedQuery(name = "TranslationCategory.findAll", query = "SELECT f FROM TranslationCategory f ", hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
+@Table(name = "translation_categories")
+@Cacheable
+public class TranslationCategory {
+    @SequenceGenerator(name = "translationCatSeq", sequenceName = "translation_cat_id_seq", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(generator = "translationCatSeq", strategy = GenerationType.AUTO)
+    @Id
+    private Long id;
+
+    private String name
+
+    ....
+
+```
+
+The data-layer integration can be found at this [commit](https://github.com/fracalo/translator/tree/66d3e64a17537c868c8a89ca05ad5d7bf02c9b43),
+It's quite basic, but you'll probably need to at least take a glimpse to understand what comes next.
+To consume our entities I'm calling the entityManger directly in the `TranslatorCtrl`.   
+All basic CRUD operations on Translation and TranslationCategories have been implemented.  
+
+One issue you might notice is that we're not using a reactive driver/pattern to access the DB, if I was to place this solution in production this is something I'd look into, not for now...
+
+
+
+### Packaging
+So far we've been using the dev environment,  
+but quarkus' packaging phase is what it was build for in the first place.  
+Exploiting [Graalvm](https://www.graalvm.org/) we're able to make tiny executables that can be run by a minimal images such as quarkus-micro-image.
+
+In order to have reproducible builds without having to mess with installing graalvm itself we can use a multistage container like the following:
+```docker
+## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/ubi-quarkus-native-image:21.3.1-java11 AS build
+COPY --chown=quarkus:quarkus mvnw /code/mvnw
+COPY --chown=quarkus:quarkus .mvn /code/.mvn
+COPY --chown=quarkus:quarkus pom.xml /code/
+USER quarkus
+WORKDIR /code
+RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
+COPY src /code/src
+RUN ./mvnw package -Pnative
+
+## Stage 2 : create the docker final image
+FROM quay.io/quarkus/quarkus-micro-image:1.0
+WORKDIR /work/
+COPY --from=build /code/target/*-runner /work/application
+COPY wait-for-postgres.sh /work/wait-for-postgres.sh
+
+# set up permissions for user `1001`
+RUN chmod 775 /work /work/application \
+  && chown -R 1001 /work \
+  && chmod -R "g+rwX" /work \
+  && chown -R 1001:root /work \
+  && chmod u+x /work/wait-for-postgres.sh
+
+EXPOSE 8080
+USER 1001
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
+```
+
+To tie the service and db together I'll add it to the docker-compose.
+I've also changed the database hostname inside the app.properties.
+
+Please note, if you were to implement this solution in production, you probably should also move the sensible configuration into environment variables so to inject them at runtime...
+
+Also note that, due to the way Graalvm works, I've added the _@RegisterForReflection_ annotation on the `TranslationInDto` class, [more info on that in the docs](https://quarkus.io/guides/writing-native-applications-tips#registering-for-reflection).
+
+If we analyze the container size we can see that it has a size of 162MB (docker ps  --size),   
+most interesting launching autocannon test after having loaded some translation this is the output:
+
+<Image src={autocannonOut} alt='Autocannon output' />
+
+Connected to database we are able to serve 16k requests in 5 seconds, I don't really have experience in this kind of test but is seems quite snappy.  
+The max memory consumed during the test is around 450MB, and, although I haven't tried this exact app on the open-jdk, in my experience, similar services would have consumed a lot more.
+
+
+-----
+
+So this is not a production ready or complete solution, and certainly I'm not the best Java programmer in the world, but what I learned through this demo is that it is quite easy to implement a quarkus solution.   
+There are multiple benefits from a traditional java JDK app.   
+IMHO What it all comes down to is that, in a micro-service architecture, using the traditional jre has no future when you have quarkus as an alternative :). 

@@ -1,0 +1,84 @@
+---
+title: Being empathetic with the code you manage
+date: '2021-08-27T15:32:03.284Z'
+category: [programming, debugging, git]
+summary: Stop thinking about code, and start looking for a story.
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+import { Image } from '@astrojs/image/components'
+import ideShot from './ide-shot.png'
+
+
+One of the major differences that characterize an experienced developer is the ability to read others' code.  
+
+Most of the work I do is on projects with many people involved, apart from sporadic hobby projects, it's rare for me to do sole programming on a repository.  
+Often at work, I'm requested to maintain/evolve pre-existing codebases.  
+I believe it's not much different for most of web-development, everybody strives to create new apps, but the big part of the work is maintenance.  
+
+The health of a project can be measured by many different means, but usually, the biggest enemy is [technical debt](https://en.wikipedia.org/wiki/Technical_debt);  
+Although any developer is aware of this, the first thing that gets sacrificed for the sake of [velocity](https://en.wikipedia.org/wiki/Velocity_(software_development)) is documentation (together with all the clean code best practices).  
+
+Once down this road, it is unarguable, the project will incrementally start accumulating tech-debt.  
+
+## So, in this sea of misery, what are we left with?
+**Code.  
+Nothing but the code, that fills the files, that make up our application.**
+
+> And so we must read and understand.
+
+At times, trying to follow the logic of a program with no logic, can be desolating.  
+But lately, I've found a technique to make it easier,   
+I open the git-blame annotation on my editor.
+
+<Image src={ideShot} alt='screen shot from ide'/>
+
+## The big picture
+Through the details of the single commits you can gain a lot of info of the evolution of the repo/feature.  
+
+Following is an example of the story I was able to reconstruct with this technique in a recent bugfix activity;  
+the problem regarded some aggregations that were not being performed as expected: 
+
+> Mike, the first programmer who worked on this feature, baked in the configuration in the code;  
+> usually, in this project, this kind of data is stored in the database and made available through the API.  
+> From other commits I'd already seen, Mike is not that bad of a programmer, so he must of had a reason to do so.  
+>
+> Later talking with the client he told me Mike was alone on the project at the time, not having access to the back-end that was the solution he found.
+>
+> Mike was also giving for granted that there would have been only 3 groups, so he create a map with 3 keys, cycled the elements and dropped them in according to the value of some inner field.
+>
+> At a later time (about 1 year difference) Mike was asked to create subgroups where one of the items was considered the leader (representative of the whole group), and the other items were descendant.
+> The subgroups where dynamic, they combined multiple fields depending on other fields.  
+> This part of the code has many reworks, so probably there were some communication issues; in fact after some weeks another developer passed by and modified some parts of this code.
+>
+> After some months came Howard,  
+> he was given the task to make the initial 3 main groups dynamic based upon one distinctive field contained in every item.  
+> to accomplish his task he didn't touch the previous code; he wrapped the result with a function that would cycle inside the previous main groups,
+> take in consideration the inner field of the leader file and make the dynamic aggregation.  
+> He gave for granted that the all the descendant items would already be aggregated correctly, and this was the origin of the problem.  
+
+Since the code had been updated many times without particular awareness to make it maintainable it was hard to follow.  
+Giving a context of the development of the feature was a big help.
+
+
+
+  
+## Being empathic
+If you've ever come across NLP (Neuro-linguistic Programming) you might have heard of the concept "active listening";  
+this is based on acceptance and empathy, which is actually quite the opposite of the sense of loneliness and desolation you feel when you're not understanding the content of a file.
+
+Having the author, in the git-blame pane next to the code, feels like having the person who wrote the code at a tangible distance.  
+Even if you don't know the author, usually, after some time, you start understanding who they were, sometimes their personality comes up, but most importantly, in this process, the code start to make more sense.  
+
+#### You eventually become friends :) 
+It has happened, that after getting to know somebody from the code they wrote, I actually met them in real life and I experienced a sense of familiarity.
+
+
+## Looking for the spirit
+In literature, but also in other forms of arts, it is a common belief that the spirit of the artist lives on in his craft.  
+
+But this is probably true for any form of expression, and code is not that much different from literature.
+
+
+
+

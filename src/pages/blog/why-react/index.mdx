@@ -1,0 +1,84 @@
+---
+title: Why react?
+summary: In this post I'll go through the history behind the library and my personal view of its pros.
+category: [react, programming]
+date: '2019-10-30T21:40:32.169Z'
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+
+In this post I'll go through the history behind the library and my personal view of its pros.
+
+---
+
+Nowadays react is probably the most famous library for client side application,  
+like anything else to understand it better we need to look where it comes from,
+here's the story:
+
+The problem react is trying to solve is to tame the high level of complexity which is inherit in client side apps.  
+In this regards it was certainly not the first project to try to do this...
+
+At the beginning the browser was JQuery's reign, with cross browser solution for just about anything;  
+through other things there was the $.ajax() method, from there the step to creating something that could be called client side was short.  
+
+Soon many specialized libraries with the goal to make client side apps easy were born (Backbone, Ember, Knockout, Mustache, Bacon, etc.);  
+and in 2010 AngularJS was released and suddenly took the lead, the fact that it offered a pattern similar to MVC(MVVM) is something that attracted many old school programmers needing to get into the client side business; furthermore it was backup up by Google, that too helped its diffusion too.
+
+In the meanwhile the general JS ecosystem and node was flourishing,  
+it was at this point that the bundler revolution took place.  
+This is actually another story, but just keep in mind that through bundlers and _pm_ you can build modular application for the browser.    
+Another set of tools which came out in that period were transpilers, people would build supersets of JS to address the language quirks or specialize in a specific domain.
+
+
+This is a synthetic picture of the client side/js ecosystem in 2013 when react was released by Facebook.
+
+It took me a while to really understand it...    
+When I started to play with it, a couple of years later, I was blown away.  
+Looking at it know, react revolutionized the way I build and think about UIs.
+
+There it is, in one project you have:
+  - Functional programming to describe the interface.
+    > In fact react, as a library, is a set of utility tools  
+    > with the purpose to model rendering components at the low-level inside the most unoppinioneted JS runtime.  
+    > Don't get me wrong react is not low level, but you can actually plug it in inside any possible pattern.
+  - JSX - Templating language on steriods,
+    > With this baby you can switch from high level JS logic to rendering markup;  
+    > I can express complicated logics with terness,  
+    > for me this is an important added value, and it also compliments well with functional programming.  
+  - Component based 
+    > Nowadays it's normal, but if you've ever maintained legacy projects you know it's not always been that way.  
+    > Bundlers give you the possibility to build your apps in modular and extensive manner,  
+    > through npm you get a bunch of reliable modules, ready for use.  
+    > And react and compenents are bread and butter with this pattern.  
+  - Performance
+    > I won't go too deep into performance, but when it came out that was one of its main arguments.  
+    > The fact that a lightweight copy of your application is stored in a virtual dom implementation,  
+    > can optimize quite a bit real dom rerenders.  
+    > Unless you go looking for them you have few probabilities to reach its limit.  
+  - Freedom
+    > From my perspective, the library is a thin layer for the rendering logic. So as a developer I can choose:  
+    > tools such as JSS (various implementations),  
+    > state management and utility libraries,  
+    > you can use it outside brower environment,  
+    > bundlers and packaging tools (easy to integrate with anything),  
+    > Typescript, ReasonML, Elm, Xstate,  
+    > you can use Web-components as leaf nodes,  
+    > and much more...  
+  - Community
+    > Being popular, you get to have a lot of friends, cool people help you out, and the network of contributers grows.  
+    > That's the way it's going with react, there is a bunch of documention;  
+    > intelligent people discuss best practices,  
+    > a bunch of tools are being built to solve common issues.  
+
+I Currently work as front-end developer with react,  
+my growth as a frontend dev has been influenced by this library,  
+so I'm opinionated on this subject because it has positively shaped the way I work.
+
+Lately I've also used Vue, which, at the time of writing is react's main contendent;  
+the way it uses observable patterns to create bindings between component props was kind of disturbing to me,  
+I've met some counter intuitive scenarios of state recomposition in nested maps/lists if compared to the functional approach I usually follow in react.  
+Also those vue files (which are the components unit) seem a too high abstraction for me.  
+But still maybe it's just a matter of habit..
+
+Want to share opinions or give me feedback on this subject?  
+I'll be happy if you reach out to me, keep care and thanks for passing by.

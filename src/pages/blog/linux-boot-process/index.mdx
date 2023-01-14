@@ -1,0 +1,63 @@
+---
+title: Linux Boot Process
+date: '2019-01-01T22:40:32.169Z'
+category: [linux]
+layout: ../../../layouts/LayoutMdx.astro
+---
+import OnOffButton from  '../../../components/OnOffButton.astro'
+
+## A high level overview from poweron to login.
+
+When you turn on your computer the system goes throgh different stages in order to initialize the hardware and then pass over the control to the OS (in particular this scheme is based on an x86 processor and linux).
+The first step is carried out by the instructions placed in the motherboards ROM chip or flash memory, the BIOS firmware (`Basic Input Output System`).  
+The `POST - power on self test` takes place at this time: Ram, Screen, keyboard are checked, 
+
+#### PowerOn -> Bios
+Starting an x86 based linux system involves many steps.
+When a computer is powered on the `Basic Input Output System` initializes the hardware, including screen and keyboard, and tests the main memory. This process is also called POST (Power on self test).  
+The Bios software is stored in a rom chip on the motherboard.  
+After this step the boot process is delegated to the OS.
+
+#### Uefi Gpt or Mbr -> Boot loader (grub/clover/etc.)
+After POST is completed the system control passes to the bootloader.
+The bootloader is usually stored on one of the hard disks in the system,
+either in the boot sector (for traditional BIOS/MBR) or the EFI/ESP (for more recent UEFI systems).  
+Up to this stage the machine does not have access to any mass storage media.
+Thereafter, information on the date, time and the most important peripherics are loaded from the CMOS values (after a technology used to for the battery-powered memory storage which allows to keep track of the date and time even when it's powered off).
+When booting linux the bootloader is responsabile for loading the kernel image and the initial ram disk/filesystem onto memory.
+
+The bootloader has 2 distinct stages
+1. For systems using MBR, the bootloader resides in the first 512 bytes sector of the hard disk, in this stage the bootloader examines the partition table and finds a bootable partition.
+Once it finds a bootable partition it searches for a second stage boot loader (ex. GRUB) and loads that  it into RAM.
+For systems using EFI/UEFI method, Uefi firmware reads it's Boot Manager data to determine which UEFI application is to be launched and from where (from which disk and partition the EFI partition can be found).
+The firmware then launches the Uefi application, for ex. Grub, as defined in the entry in the firmware's boot manager. This procedure is more complicated, but more versitile than MBR.
+2. The seconde stage boot loader resides in the /boot. A splash screen from which we choose the Os is displayed.
+After choosing the OS the boot loader loads the selected kernel into ram and passes control to it.
+The boot loader loads the selected kernel and passes control to it. Kernels are always compressed so its first job is to uncompress itself.
+After this it will check/analyze the system hardware and initialize any hardware device driver built into the kernel.
+
+#### Kernel (linux) -> init ram fs
+The initramfs filesystem iamge contains programs and binary files that perform all actions needed to mount the proper root filesystem, like providing kernel functionality for the needed filesystem, and device drivers for mass storage controllers with a facility called udev (u for user, dev for device), which is responsible for figuring out which devices are present, locating the drivers they need to operate properly, and loading them. After the root filesystem is found it is checked for errors and mounted.
+
+ The mount program instructs the OS that a filesystem is ready for use, and associates it with a particular point in the overall hierarchy of the filesystem (the mount point). If this is successful, the initramfs is cleared from RAM and the init program on the root filesystem (/sbin/init) is executed.
+
+####  /sbin/init
+Init handles the mounting and pivoting over to the final real root filesystem. If special hardware drivers are needed before the mass storage can be accessed, they must be in the initramfs image.
+
+#### Command shell using getty
+Near the end of the boot process, init starts a number of login prompts.
+Init has runlevels that corresponding to the different phases in which functionalities are started:
+  - 1 Single user mode
+  - 2 Multi user mode
+  - 3 Multi user mode with network
+  - 5 Display Manager
+
+Runlevels are valid both in SysVinit and SystemD, while booting through grub it is possible insert an option that defines which runlevel is being targeted.
+
+#### Conclusion
+The booting process is something that I've always seen with a big deal of admiration, each stage builds upon the stage before and getting a complete OS up and running has quite a lot of steps; and all this is being done every time you turn on your pc.  
+Think about it the next time you press the power button.
+
+<OnOffButton />
+
+

@@ -1,0 +1,83 @@
+---
+title: Setting up your on-premise K8s cluster through cloudformation
+date: '2022-08-11T22:00:03.284Z'
+category: [k8s, containers, docker, dev-ops, CI]
+layout: ../../../layouts/LayoutMdx.astro
+summary: This thread goes throught the creation of a 2 node ec2 based K8s cluster in AWS, automated with the cloudformation template.
+---
+
+
+import { Image } from '@astrojs/image/components'
+import ship from './ship.png'
+
+Through this post we're going to build a 2 node (educational purpose) cluster using __kubeadm__.  
+The arrival of this journey will be to launch __kubeadm init/join__, and install the network plugin, from there on I'll redirect you to the official documentation.  
+
+The cloudformation template we're building could also come useful for automation, so if you want just that [here it is](https://gist.github.com/fracalo/a72cc8f42c1cb15110690ebfd2ac22e8).
+
+--- 
+## Shopping list:
+ - 2 __aws ec2__ as nodes.
+ - __cri-o__ as the container runtime.  
+   from k8s 1.24 I wouldn't recommend the use of docker because then you'd also need to install a shim to make it compatible with [CRI](https://kubernetes.io/docs/concepts/architecture/cri/), also the default cri-o cgroup driver is systemd, and that matches kubelet's cgroup so we don't need to change any configuration in this regards.
+ - __calico__ for the networking. 
+ - latest __kubernetes, kubeadm__ (at the time of writing we're on 1.24.3).
+
+
+Nothing fancy, the added value of this post is that we're going to automate as much as possible using cloudformation for Iac.
+
+<Image src={ship} alt='ship which carries container'/>
+
+## The VMs
+The VM type is going to be a t3.medium with ubuntu 22;  
+I prefer going with ubuntu because if gives wide compatibility with k8s and it comes with a lot of other useful goodies already installed; that said for a production scenario I'd probably start from a slimmer distro.  
+In AWS the __amiId__ is unique for region, the default one you'll find in the template is for the eu-north-1 region,  
+NB: if you're going to launch the stack somewhere else you'll need to look this up.
+
+For the securityGroup we're going to configure an all open group to host the VMs, if you want to tweak this part you can check the [ports needed in a k8s cluster](https://kubernetes.io/docs/reference/ports-and-protocols/). 
+
+To access the machines we've added an ssh key, in case you don't have a public key loaded in AWS refer to [this guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html#how-to-generate-your-own-key-and-import-it-to-aws).
+
+## K8s tools install
+During the EC2 startup we can drop the bash commands we want to run, as soon as the machine is available, [in the UserData Property for the EC2 Instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html).  
+The field inside the template is named [UserData](https://gist.github.com/fracalo/a72cc8f42c1cb15110690ebfd2ac22e8#file-simplekubeadmconf-yaml-L33), here is an overview of what we're doing:
+ - General update.
+ - Install the keyring certificates for kubernetes and crio.
+ - Install Kubeadmn, cri-o, k8s and friends.  
+ - Add the ControlPlane network ip in the hosts file (so we can reference it by name instead of IP, useful in multi ControlPlane scenario), we also do this on the workerNode.
+ - Tweak the cri-o configuration (use the reccomended __pause__ container).
+ - Enable some kernel modules and parameters needed for crio (adding configuration to make it persistent accross reboots).
+ - Start and enable crio daemon.
+ - Launch kubeadm with essential configuration,  
+   __kubeadm init --control-plane-endpoint k8scp:6443 --cri-socket unix:///var/run/crio/crio.sock --pod-network-cidr 192.168.0.0/16__.
+ - And finally add calico. 
+
+## Create the stack
+After having defined the stack we'll need to launch the __cloudformation create-stack__ command in order to create an instance of our stack.
+
+First thing to do is download the template:
+```
+wget https://gist.githubusercontent.com/fracalo/a72cc8f42c1cb15110690ebfd2ac22e8/raw/8421413261730c5a506dfe892bda5036028a9e51/simpleKubeadmConf.yaml
+```
+
+The template parameters are __keyName__ (the ssh key you're going to use to access the VMs), __Ami__ for the amiId (it's going to be the ubuntu22 AmiId for the region you have chosen) and the instance type.
+```
+aws cloudformation create-stack --region eu-north-1 --stack-name k8s-stack --template-body file://simpleKubeadmConf.yaml --parameters ParameterKey=KeyName,ParameterValue=k8sKey ParameterKey=Instance,ParameterValue=t3.medium 
+```
+This is an example of how I'm using __create-stack__,  
+in this case we've omitted the ami because there is a default value in the [template](https://gist.github.com/fracalo/a72cc8f42c1cb15110690ebfd2ac22e8#file-simplekubeadmconf-yaml-L10).
+
+You can check the status of the stack with __aws cloudformation describe-stacks --region eu-north-1 --stack-name k8s-stack__, in the __Stack.Outputs__ you can also view the ip addresses of the machines, useful for ssh access.  
+The commands we're running on the ControlPlane might take some minutes, you can check if some process are still running with __ps__, or checking the kubeadm init output (/root/kubeadmInit.out) on the CP.
+
+## Connecting the worker node to the cluster
+To join the worker node you can find the instructions in the output of __kubeadm init__  that we've saved on the CP node (/root/kubeadmInit.out).  
+And this is it! From here on you can follow your K8s Administration journey on the official [kubeadm guide](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/).
+
+----
+Once finished with your tests you can tear down the stack with __aws cloudfomation delete-stack --stack-name ...__ .  
+In conclusion I found that automating the cluster creation through cloudformation and kubeadm is quite easy,  
+clearly this is just for testing purpose, in a production scenario 2 nodes wouldn't be enough and there are lots of things that can be configured more accurately.  
+But still I find a lot of value in having a single template doing all the heavy lifting, hope you do too!
+
+

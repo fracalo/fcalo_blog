@@ -1,0 +1,150 @@
+---
+title: A scenario of react app optimization
+date: '2022-01-23T22:32:03.284Z'
+category: [react, programming, optimization]
+summary: Dealing with custom dragging motion in react, example of using the profiler tab to analyze components.
+layout: ../../../layouts/LayoutMdx.astro
+
+---
+
+import firstImplementation from './first-implementation.png'
+import raf from './raf.png'
+import throttle from './throttle.png'
+import { Image } from '@astrojs/image/components'
+
+
+I think any article on optimization should start with the famous Knuth quote:  
+> Premature optimization is the root of all evil  
+
+:) That said lets dive in.
+
+Recently I was working on a react app which has a node dragging action,  
+for moving the node I couldn't find anything better than to deal with the mouseDown, mouseMove, mouseUp events directly.  
+I'm defining the action as dragging but actually on each mouseMove event I need to calculate the position of the element which has to move on a specified path. 
+
+You can find the entire app <a target="_blank" href="https://sine-cosine-calculator.fcalo.com/">here</a>.
+
+The state of this functionality is contained in a <a target="_blank" href="https://github.com/fracalo/sine-cosine-calc/blob/master/src/hooks/useCircleProps.ts#L100">custom hook which on turn uses useReducer internally</a>.
+
+```ts
+const useCircleProps = (): ControlsProps => {
+  const [values, dispatch] = useReducer(reducer, initialState);
+
+  const changeHandle = useCallback(
+    (k: TrigValuesKeys) => (v: number) => {
+      dispatch({ type: k, value: v });
+    },
+    []
+  );
+  const changeGraphHandle = useCallback((value: { x: number; y: number }) => {
+    dispatch({ type: "x_y", value });
+  }, []);
+
+  const p: ControlsProps = {
+    values,
+    changeHandle,
+    changeGraphHandle,
+  };
+  return p;
+};
+
+```
+
+<a target="_blank" href="https://github.com/fracalo/sine-cosine-calc/blob/master/src/components/Graph/index.tsx#L66">Here</a> is the function (in the component) that deals with extracting the mouseMove X Y position and using the changeGraphHandle callback defined in the hook:
+
+```ts
+ const moveHandle = useCallback(
+    (e: MouseEvent) => {
+      const current = svgRef.current as unknown as SVGCircleElement;
+      const { top, left, height, width } = current.getBoundingClientRect();
+
+      const xx = left + width / 2;
+      const yy = top + height / 2;
+
+      const px = e.pageX;
+      const py = e.pageY;
+      const payload = getXY(px - xx, py - yy);
+      changeGraphHandle(payload);
+    },
+    [changeGraphHandle]
+  );
+```
+
+As you can see this is already using the useCallback hook for caching the event handler.
+
+## Lesson 1
+In most apps using useCallback isn't necessary, but, if you know what it does, and how it can avoid components rerenders, you'll probably save yourself a lot of headaches when you really need it. 
+
+At this point our functionality is already working quite well, the production build looks smooth.  
+
+But you might note some sluggishness in the dev build,  
+so lets investigate why this happens... 
+If you want to pick up the code, <a target="_blank" href="https://github.com/fracalo/sine-cosine-calc/tree/31520d4cb8eda3d93d09cca2d70cfbb1e5104a81">this</a> is the commit we're on.
+
+
+## Prove your impressions with concrete evidence  
+So I can tell there are some glitches in CRA dev environment, now what?  
+Once here you need to find a way to measure the app's performance,  
+what I'll use is chrome devtool performance panel,  
+opening it you can start recording the interactions you feel can be optimized.
+
+<Image src={firstImplementation} alt='first implementation' />
+
+
+From this report we see that some mousemove events are marked with a warning named "long task",
+from there you can read the stack this handler creates and these are all interesting information, but you can also tell you're probably calling that handler way too much, and just reducing the number of times it is invoked would probably be your best perf improvement.  
+
+And this is what we'll try...
+
+AFAIK Using lodash.throttle is the easiest way to create a throttled function,
+after importing the npm package, it's just a matter of <a target="_blank" href="https://github.com/fracalo/sine-cosine-calc/blob/master/src/hooks/useCircleProps.ts#L109">wrapping our callback:</a>
+
+```ts
+  const changeGraphHandle = useCallback(
+    throttle(
+      (value: { x: number; y: number }) => {
+        dispatch({ type: "x_y", value });
+      },
+      20,
+      { leading: true, trailing: true }
+    ),
+    []
+  );
+```
+This is the <a target="_blank" href="https://github.com/fracalo/sine-cosine-calc/tree/e08ea4a14657045b10196921efe9bc8d3e2a2db0">commit</a>.  
+But it doesn't really improve the situation, and to prove this you can find the performance graph below.
+
+<Image src={throttle} alt='throttle example' />
+
+What I can tell is that the overhead of dealing with setTimeout directly has quite an impact.
+
+
+Since we're into testing let's try using <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame">requestAnimationFrame</a>, this function was meant to avoid performance issues with browser animations and therefore might be our best option, here's our callback with RAF:
+
+```ts
+  const changeGraphHandle = useCallback((value: { x: number; y: number }) => {
+    requestAnimationFrame(() => {
+      dispatch({ type: "x_y", value });
+    });
+  }, []);
+```
+
+Now this is interesting, in the development build it still drops some frames but it does it quite evenly.  
+Reading the specs RequestAnimationFrame should call the contained callback when the thread is ready to receive it paying attention to the browser resource, this is something you may not perceive on a standard laptop but that should prove extremely helpful on legacy and economic devices.
+
+<Image src={raf} alt='request animation from'/>
+
+Apart from the profiling info the UX feeling is much smoother than our other versions, so we have a winner, this will be my final version! 
+
+In conclusion optimizing a react app really depends on the specific case, in 80% of the apps I've developed there was really no focus on the performance optimization aspect because it wasn't needed.  
+
+The case described in this post has to do with a specific situation, Hopefully it will be inspiration for some illuminating associations when you might need them.
+
+
+
+
+
+
+
+
+

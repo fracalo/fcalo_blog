@@ -1,0 +1,80 @@
+---
+title: Hello Gatsby
+date: '2018-12-27T22:12:03.284Z'
+category: [react, gatsby]
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+import { Image } from '@astrojs/image/components'
+import gatsby from './gatsby.jpg'
+
+This is a post on my experience in creating this blog using [Gatsby](https://www.gatsbyjs.org/).
+
+
+<Image src={gatsby} alt='Gatsby-Poster'/>
+
+In the past I've seen many framework and open source projects claim themselves as _the ultimate blogging platform_,
+but since I'm a client-side and js enthusiast I couldn't settle with any old school CMS;  
+so these were the requirements of what I was looking for:
+  - Completely client side (react all the way).
+  - Functional server/client communication out of the box. 
+  - Server side rendering.
+  - Possibly not maintain a db (markdown files please).
+  - Something that could be expandable.
+
+I had already heard of Gatsby and reading the docs these are actually some of its selling points.
+
+The thing that amazed me most (and probably creates confusion to new comers)
+is the fact that you can opt in and out of some of the points above through plugins/configuration,
+and this makes it adaptable to all sorts of projects apart from blogging.
+Plus it comes with a lot of goodies such as server side rendering, underlying graphql communication (also Graphiql in development), PWA (Workbox), ahead of time data fetching, caching, etc..
+
+## Let's set it up
+Setting it up for development is really a breeze.  
+Gatsby comes with the `gatsby-cli` tool,
+this will abstract away the preparation of development tooling and production builds.
+
+The command to get the development environment running is  
+`gatsby develop`  
+What you get is hot-reload environment that supports JS modern syntax.
+
+## Choosing a starter theme
+The starter theme I chose for the blog is the `gatsby-starter-blog` (installed with `yarn add gatsby-starter-blog`);
+there are many to choose from but this seems to be one of the most popular,
+since it supports all the requirements I was looking for this was an easy decision.
+
+## Gatsby configuration
+The place where you will need to wire up and configure all the plugins is the `gatsby-config.js` file (in the root of the project),
+the starter theme already comes with some plugins already configured:
+  - **gatsby-source-filesystem**  
+  needed for requests dealing with posts (stored on md files)
+  - **gatsby-transformer-remark**  
+  to tranform markdown to html
+  - **gatsby-plugin-sharp** & **gatsby-transformer-sharp**  
+  used for processing images
+  - **gatsby-plugin-google-analytics**  
+  for setting up analytics tracker
+  - **gatsby-plugin-feed**  
+  for rss
+  - **gatsby-plugin-manifest** & **gatsby-plugin-offline**  
+  to set up the PWA
+  - **gatsby-plugin-react-helmet**  
+  control head node in react
+  - **gatsby-plugin-typography**  
+  which controls typography and global css
+
+This is only the top list of plugins, some plugins also have related sub-modules that can be used/configured.
+
+## Final Build
+As you would expect there is an intuitive `gatsby build` command to prepare the production build.
+to serve the files you've just build you can use the `gatsby serve` command and your project will be reachable on port 9000.
+
+As for the actual server I'd probably have nginx proxy all the static resources out of the public directory (that's the default location for the build).
+
+If you're wondering "hei you said there's an API, how can it be static",   
+the magic here is that gatsby uses graphql at build time, you use the language to describe what the component will need and then use that info when building the pages;   
+In reality the [documentation states that you could also have an API feed you data](https://www.gatsbyjs.org/docs/querying-with-graphql/), so like most other things in Gatsby this is an option.
+
+And this is my first post on Gatsby, hope you'll enjoy the framework as much as I am!
+
+

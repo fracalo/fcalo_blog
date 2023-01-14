@@ -1,0 +1,110 @@
+---
+title: Dockerizing my virtual machine
+date: '2021-04-01T22:12:03.284Z'
+category: [docker, programming]
+summary: Simple docker receipe on an AWS EC2.
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+import { Image } from '@astrojs/image/components'
+import dockerize from './dockerize.png'
+
+
+<Image src={dockerize} alt='dockerize image'/>
+
+# Docker in EC2
+
+For the last years I've used a VM with quite a traditional setup for my private projects: nginx serving some static files, proxying to a node app, plus some other minor utilities.  
+This VM has been serving me well, it's economic enough for me not thinking about it for months, and it has been doing its job flawlessly.
+
+But lately I've been increasingly adopting docker in production/development environments, and since running docker on Azure seems kind of expensive (I exhausted my Visual Studio subscription credit in about a third of the billing period counting only the cost of [ACI](https://azure.microsoft.com/en-us/services/container-instances/) - 3 containers in total), I want to try to move my personal apps and prototypes in containers running on a VM.
+
+
+For this task I've choosen an EC2 T3.small; this machine provides me with 2threads (burstable, whatever that means), 2GB of RAM; it should be enough for my needs. 
+
+
+After instantiating my brand new EC2 I started studying what was the most convenient way to run and manage containerized apps; after some exploration I had the awareness that containers where not a good fit for everything.  
+For example ngnix, I prefer having that running on the VM, it seem less cumbersome to update certificates, plus I made the assumption it would be quicker to test new configurations.
+Also static content (A big part of my apps are js client-side), I really couldn't find a sense in having a container serve static content through a reverse proxy, and having that relayed by another reverse proxy.
+
+
+
+--- 
+So what is left to containerize?  
+for me it can be summerize with...
+
+### Runtimes
+
+1. Runtimes used by apps/apis elaborating things on the server, proxied to the users through nginx.
+
+Following is an example of nginx.conf stanza for proxying an api running in docker:
+```nginx
+
+server {
+    listen [::]:443 ssl;
+    listen 443 ssl;
+
+    server_name localhost  api.xxxx.it;
+
+    # Protect against the BEAST attack by not using SSLv3 at all. If you need to support older browsers (IE6) you may need to add
+    ssl_protocols              TLSv1.2;
+
+    ssl_ciphers                ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:ECDHE-RSA-RC4-SHA:ECDHE-ECDSA-RC4-SHA:AES128:AES256:RC4-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK;
+    ssl_prefer_server_ciphers  on;
+
+    ssl_session_cache    shared:SSL:10m; # a 1mb cache can hold about 4000 sessions, so we can hold 40000 sessions
+    ssl_session_timeout  24h;
+
+
+    # Use a higher keepalive timeout to reduce the need for repeated handshakes
+    keepalive_timeout 300; # up from 75 secs default
+
+    # remember the certificate for a year and automatically connect to HTTPS
+    add_header Strict-Transport-Security 'max-age=31536000; includeSubDomains';
+
+    ssl_certificate    /.acme.sh/api.xxxx.it/api.xxxx.it.cer;
+    ssl_certificate_key    /.acme.sh/api.xxxx.it/api.xxxx.it.key;
+
+    location / {
+        proxy_pass http://localhost:8001; # TODO: replace port if app listens on port other than 80
+        
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+    }
+}
+
+```
+
+2. Runtimes used by runners (which are local to the system) to create static resources, throw-away containers that build in docker context, and copy the output to filesystem.
+
+For example, this is a `.gitlab-config.yml` used by the runner, in the script sections you can see what I mean. 
+```yaml
+
+stages:
+  - deploy
+
+deploy_ec2:
+ stage: deploy
+ environment:
+   name: production 
+   url: 
+ only:
+   - master
+ script:
+     - cd /home/ec2-user/Repos/blog
+     - git pull
+     - docker build -t docker-builder .
+     - docker run --name docker-builder-run --mount type=bind,source=/srv/www/blog,target=/app/public-def docker-builder
+     - docker rm docker-builder-run
+     - docker rmi docker-builder
+```
+
+
+---
+
+
+The main success in this setup is that I won't end up polluting the system with sparse runtimes that might get superseeded but could remain on my system, since all of these are in docker it seems easier to control.  
+On the other hand what was actually installed (nginx, utilities for certificates, tools for CI/CD, etc.) are somewhat more accessible than if I had containerized them.
+

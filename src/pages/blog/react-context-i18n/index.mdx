@@ -1,0 +1,143 @@
+---
+title: I18n using React context
+date: '2019-09-15T23:10:49.284Z'
+summary: An easy pattern for dealing with internazionalization in react.
+category: [react, programming]
+layout: ../../../layouts/LayoutMdx.astro
+---
+import { Image } from '@astrojs/image/components'
+import babelFish from './babel-fish.png'
+
+
+In its simplest declination I18n means providing a value from a dictionary based on a key.  
+
+<Image src={babelFish} alt='request animation from'/>
+
+So the idea here is to leverage react context to provide the dictionary,
+and then provide the value to our application through a utility function,
+which will be a wrapper of the context declared earlier.
+
+
+---
+To start we create the context and provide no initial value (the idea of keeping the initial value empty is something that resembles my ideal app flow where the dictionary is fetched on the run from somewhere).
+
+```js
+// App.js
+// highlight-next-line
+const LangCtx = React.createContext()
+```
+
+We'll use the standard create-react-app boilerplate as example,
+and wrap the App with the context provider:
+
+```js
+// App.js
+
+// we export the context for the consumer component...
+// highlight-next-line
+export const LangCtx = React.createContext()
+
+function App() {
+  return (
+// highlight-next-line
+    <LangCtx.Provider value={{hello: 'hola'}} >
+      <div className="App">
+       ...
+      </div>
+// highlight-next-line
+    </LangCtx.Provider>
+  );
+}
+```   
+
+At this point we'll create a component which receives a single `str` attribute  
+and either translates the string (based on the context dictionary)  
+or returns that same string (in case no translation or dictionary is provided).
+
+```js
+// I18n.js
+import React, { useContext } from "react";
+
+import { LangCtx } from "./App";
+
+// highlight-start
+const I18n = ({ str }) => {
+  const dict = useContext(LangCtx);
+  const translated = dict && dict[str] ? dict[str] : str;
+
+  return <span>{translated}</span>;
+};
+// highlight-end
+```
+
+We'll also provide a wrapper function for this component:
+```js
+// highlight-next-line
+export const withLang = str => <I18n str={ str } />
+```
+
+Now we can import `withLang` and use it where ever we need it! 
+```js
+// App.js
+
+// highlight-next-line
+import { withLang } from "./I18n"
+
+function App() {
+  return (
+    <LangCtx.Provider value={{ hello: "ciao" }}>
+      <div className="App">
+// highlight-next-line
+        <h1> {withLang("hello")}</h1>
+        ...
+      /div>
+    </LangCtx.Provider>
+  );
+}
+```
+
+---
+The fact that we hardcode the value we're providing doesn't give much advantage,  
+so to spice up things a little bit I'll provide some sample dictionaries,  
+and rotate them with setTimeout/useState inside `App.js`.
+
+```js
+// App.js
+import React, { useState } from "react";
+
+import { withLang } from "./I18n";
+export const LangCtx = React.createContext();
+const eng = { hello: "hello" };
+const ita = { hello: "ciao" };
+const spa = { hello: "hola" };
+const fre = { hello: "salut" };
+const por = { hello: "olá" };
+
+const langs = [eng, ita, spa, fre, por];
+let i = 0;
+
+function App() {
+    const [dict, setDict] = useState();
+
+      setTimeout(() => {
+        i++;
+        setDict(langs[i % langs.length]);
+      }, 2000);
+
+      return (
+        <LangCtx.Provider value={dict}>
+          <div className="App">
+            <h1> {withLang("hello")}</h1>
+          </div>
+        </LangCtx.Provider>
+      );
+}
+export default App;
+```
+
+The asynchronous change of dictionary should resemble a fetch to the API...
+
+If you want to elaborate on this post take a look at the [repo](https://github.com/fracalo/react-i18n-context) (tag `v1.0` is the version up to here).
+
+
+

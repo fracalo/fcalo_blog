@@ -1,0 +1,81 @@
+---
+title: Curry-request, a browser/node fetch wrapper 
+date: '2021-08-17T22:32:03.284Z'
+category: [programming, js, ts, fetch, npm, browser, nodejs]
+summary: Axios alternative for dealing with XHR, motivations behind curry-request
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+
+I don't remember what my first AJAX call looked like,  
+probably I was using a Jquery function.  
+When some years later I saw __fetch__ for the first time I thought it was just another wrapper, but it wasn't, and from there on that became the standard for making browser http request.
+
+
+## Why curry-request, story about modularization
+Usually, in any application that has to deal with APIs, you'll build a service (a.k.a. module) that exposes functions which will be consumed by the application's business logic.  
+In this service you will probably pull the API's configuration from a separate file/env-variables;  
+if you use `fetch` directly in the methods you expose you will soon note a lot of duplications (especially dealing with REST interfaces).  
+[curry-request](https://www.npmjs.com/package/curry-request) helps you cope with this issue and increase the terseness and maintainability of your code.
+
+With one curried function you can configure the http-client,  
+the order in which parameters have been arranged increase [DRYness](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).  
+
+This is what the service could look like:
+```ts
+import cr from "curry-request"
+// we place the web api base url & the base headers
+const apiRequest = cr("https://jsonplaceholder.typicode.com")({
+  "Content-Type": "application/json",
+  Accept: "application/json"
+})
+
+const get = apiRequest("GET")
+const post = apiRequest("POST")
+const put = apiRequest("PUT")
+const del = apiRequest("PUT")
+
+// get                                                                                                                                                                                                                                    
+export const getTodosById = (id) => get("/todos/" + id)()()                                                                                                                                                                            
+export const getTodos = get('/todos')()
+                                                                                                                                                                                                                                          
+// post                                                                                                                                                                                                                                   
+export const postTodo = (payload) => post("/todos")(payload)()                                                                                                                                                                         
+                                                                                                                                                                                                                                          
+// post                                                                                                                                                                                                                                   
+export const putTodo = (id, payload) => put("/todos/" + id)(payload)()                                                                                                                                                                           
+                                                                                                                                                                                                                                          
+// delete                                                                                                                                                                                                                                 
+export const deleteTodosById = (id) => del("/todos/" + id)()();
+
+```
+
+Notice how `getTodos` is not wrapping the actual function call, in these cases we're just passing the reference to the returned function in a [pointless fashion](https://en.wikipedia.org/wiki/Tacit_programming),  
+you can get creative in composing the function with this pattern.
+
+
+[Take a look at the playground for a quick demonstration](https://fracalo.github.io/curry-request/#random-examples).
+
+
+## What about Axios
+Axios is currently the most used library for organizing http client services in JS apps,  
+it has its roots in the http-module used in Angular, but it makes some opinionated choices in how it transforms requests and responses that are quite radical for my taste.  
+Similarly to axios, with [curry-request](https://www.npmjs.com/package/curry-request) there is pattern for creating instances, and for feeding the token once it is available.
+Also, interceptors can be implemented accessing the underlying fetch implementation.  
+The main difference is that __curry-request__ returns a [fetch-response](https://developer.mozilla.org/en-US/docs/Web/API/Response).
+
+
+
+## Fetch implementation
+The fetch implementation used by default is `cross-fetch` (`node-fetch` for node and a `whatwg-fetch` for browser), but it can be switched if you prefer something else;  
+it is one of the arguments that can be passed to configuration.  
+
+
+--- 
+
+I published this module some months ago but actually we've been using it in production for quite some time now,   
+it has worked well for me both for browser and node apps, hopefully you might gain some benefits from it too!  
+For any problems/questions open an issue on [github](https://github.com/fracalo/curry-request).
+
+
+
