@@ -1,6 +1,7 @@
 ---
 import GlobalLayout from './GlobalLayout.astro'
 import '../css/styles.css'
+import Footer from '../components/Footer.astro'
 
 export interface Props {
 	title: string;
@@ -17,4 +18,5 @@ const { title, description } = Astro.props;
             <slot />
         </div>
     </div>
+    <Footer />
 </GlobalLayout>

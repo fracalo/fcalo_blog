@@ -6,8 +6,7 @@ layout: ../../../layouts/LayoutMdx.astro
 summary: This thread goes throught the creation of a 2 node ec2 based K8s cluster in AWS, automated with the cloudformation template.
 ---
 
-
-import { Image } from '@astrojs/image/components'
+import { Picture } from '@astrojs/image/components'
 import ship from './ship.png'
 
 Through this post we're going to build a 2 node (educational purpose) cluster using __kubeadm__.  
@@ -26,7 +25,8 @@ The cloudformation template we're building could also come useful for automation
 
 Nothing fancy, the added value of this post is that we're going to automate as much as possible using cloudformation for Iac.
 
-<Image src={ship} alt='ship which carries container'/>
+<Picture src={ship} widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} alt='ship which carries container' />
+
 
 ## The VMs
 The VM type is going to be a t3.medium with ubuntu 22;  

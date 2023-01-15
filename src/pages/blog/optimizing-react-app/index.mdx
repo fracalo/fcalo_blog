@@ -10,7 +10,7 @@ layout: ../../../layouts/LayoutMdx.astro
 import firstImplementation from './first-implementation.png'
 import raf from './raf.png'
 import throttle from './throttle.png'
-import { Image } from '@astrojs/image/components'
+import { Picture } from '@astrojs/image/components'
 
 
 I think any article on optimization should start with the famous Knuth quote:  
@@ -88,8 +88,7 @@ Once here you need to find a way to measure the app's performance,
 what I'll use is chrome devtool performance panel,  
 opening it you can start recording the interactions you feel can be optimized.
 
-<Image src={firstImplementation} alt='first implementation' />
-
+<Picture src={firstImplementation} alt='first implementation' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 From this report we see that some mousemove events are marked with a warning named "long task",
 from there you can read the stack this handler creates and these are all interesting information, but you can also tell you're probably calling that handler way too much, and just reducing the number of times it is invoked would probably be your best perf improvement.  
@@ -114,7 +113,7 @@ after importing the npm package, it's just a matter of <a target="_blank" href="
 This is the <a target="_blank" href="https://github.com/fracalo/sine-cosine-calc/tree/e08ea4a14657045b10196921efe9bc8d3e2a2db0">commit</a>.  
 But it doesn't really improve the situation, and to prove this you can find the performance graph below.
 
-<Image src={throttle} alt='throttle example' />
+<Picture src={throttle} alt='throttle example' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 What I can tell is that the overhead of dealing with setTimeout directly has quite an impact.
 
@@ -132,7 +131,7 @@ Since we're into testing let's try using <a target="_blank" href="https://develo
 Now this is interesting, in the development build it still drops some frames but it does it quite evenly.  
 Reading the specs RequestAnimationFrame should call the contained callback when the thread is ready to receive it paying attention to the browser resource, this is something you may not perceive on a standard laptop but that should prove extremely helpful on legacy and economic devices.
 
-<Image src={raf} alt='request animation from'/>
+<Picture src={raf} alt='request animation frame' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 Apart from the profiling info the UX feeling is much smoother than our other versions, so we have a winner, this will be my final version! 
 

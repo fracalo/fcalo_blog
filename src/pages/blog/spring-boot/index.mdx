@@ -6,7 +6,7 @@ summary: Springboot MVC 101 with H2 persistence, entirely implemented with serve
 layout: ../../../layouts/LayoutMdx.astro
 ---
 
-import { Image } from '@astrojs/image/components'
+import { Picture } from '@astrojs/image/components'
 import h2ConsoleLogin from './h2-console-login.png'
 
 I've never really used java in production until lately, and actually for me it was kind of easy to get productive (whatever that means).  
@@ -158,8 +158,7 @@ spring.h2.console.enabled=true
 ```
 Setting `spring.h2.console.enabled` property to true enables the web-console at <a href="http://localhost:8080/h2-console" target="_blank">http://localhost:8080/h2-console</a>.  
 
-
-<Image src={h2ConsoleLogin} alt='h2 console login screenshot'/>
+<Picture src={h2ConsoleLogin} alt='h2 console login screenshot' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 This is a in memory db so turning off the app will flush the data (if you want to persist the data to a file you'll need to set `spring.datasource.url` in your settings).
 

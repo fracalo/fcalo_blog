@@ -3,15 +3,14 @@ title: About this blog
 date: '2018-12-22T22:40:32.169Z'
 layout: ../../../layouts/LayoutMdx.astro
 ---
-import { Image } from '@astrojs/image/components'
+import { Picture } from '@astrojs/image/components'
 import urbanDev from './urban-development.png'
-
 
 A brief explanation on the blog-title.  
 As you may notice the posts have nothing to do with construction engineering,
 building neighborhoods and related.
 
-<Image src={urbanDev} alt='urban development mexico city'/>
+<Picture src={urbanDev} widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} alt='urban development mexico city' />
 
 In fact I'm a programmer,
 the name __outskirt development__ came as the first association of the term __development__ to something that wasn't related to computers.
@@ -22,7 +21,6 @@ Connecting the pieces during [registration][1] is a known technique to help inte
 
 This process has brought me to learn lots of things, metaphorically scale outwards, just like urban outskirt development.  
 
-That said the blog is about my experiences programming.   
-If you want to reach out to me please do so, I'm usually quite friendly.
+That said my name is Francesco Calò and If you want to reach out you can find my contacts below, thanks for passing by!
 
 [1]: https://www.google.com/search?q=the+3+r%27s+of+memory

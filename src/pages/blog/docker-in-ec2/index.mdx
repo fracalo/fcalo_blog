@@ -6,11 +6,11 @@ summary: Simple docker receipe on an AWS EC2.
 layout: ../../../layouts/LayoutMdx.astro
 ---
 
-import { Image } from '@astrojs/image/components'
+import { Picture } from '@astrojs/image/components'
 import dockerize from './dockerize.png'
 
 
-<Image src={dockerize} alt='dockerize image'/>
+<Picture src={dockerize} alt='dockerize image' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 # Docker in EC2
 

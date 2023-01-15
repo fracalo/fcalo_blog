@@ -2,6 +2,7 @@
 import type { Post as Props } from '../utils/posts'
 import { getFormattedDate } from '../utils/posts'
 import GlobalLayout from './GlobalLayout.astro'
+import Footer from '../components/Footer.astro'
 
 export type { Props }
 
@@ -11,8 +12,8 @@ const formattedDate = getFormattedDate(date)
 ---
 
 <GlobalLayout title={title} description={summary}>
-    <article class="blog-article p-2 pt-6 justify-center flex">
-        <div class="content-wrapper">
+    <article class="blog-article pt-6 justify-center flex">
+        <div class="content-wrapper p-2">
             <h1 class='post-title'>
                 { title }
             </h1>
@@ -26,4 +27,5 @@ const formattedDate = getFormattedDate(date)
             </div>
         </div>
     </article>
+    <Footer />
 </GlobalLayout>

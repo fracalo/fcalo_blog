@@ -26,7 +26,6 @@ const menuRoutes = [
             </li>
         </ul>
     ))}
-        
  </div>
 </menu>
 
@@ -96,7 +95,7 @@ const menuRoutes = [
     }
 
     .wrap:hover {
-        background: rgb(var(--accent2));
+        background: rgb(var(--accent));
     }
     .svg {
         position: relative;
@@ -111,8 +110,7 @@ const menuRoutes = [
     }
     .menu {
         border-left: 1px solid #ddd;
-        display: block;
-        position: absolute;
+        position: fixed;
         top: 0;
         bottom: 0;
         right: 0;
@@ -121,6 +119,10 @@ const menuRoutes = [
         min-width: 10rem;
         background: rgb(var(--dark));
         color: #fff;
+        height: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
     }
     .menu.show {
         translate: 0;

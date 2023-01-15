@@ -53,14 +53,21 @@ code {
 .post-title {
     color: rgb(var(--accent));
     font-size: 2rem;
-    font-weight: 900;
+    font-weight: 600;
     line-height: 1.15;
+}
+
+.section-title {
+    font-family: "Kiwi Maru", serif;
+    font-size: 4rem;
+    font-weight: 500;
 }
 
 .blog-article  {
     padding-bottom: 4rem;
 }
-blog-article h2 {
+
+.blog-article h2 {
     font-weight: 800;
     font-size: 1.8rem;
     padding-bottom: .7em;

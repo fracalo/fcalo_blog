@@ -5,13 +5,14 @@ category: [react, gatsby]
 layout: ../../../layouts/LayoutMdx.astro
 ---
 
-import { Image } from '@astrojs/image/components'
+import { Picture } from '@astrojs/image/components'
 import gatsby from './gatsby.jpg'
 
 This is a post on my experience in creating this blog using [Gatsby](https://www.gatsbyjs.org/).
+> [edit 15 jan 2023] Corrige: I've switched the blog framework to astrojs.
 
 
-<Image src={gatsby} alt='Gatsby-Poster'/>
+<Picture  src={gatsby} alt='Gatsby-Poster' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 In the past I've seen many framework and open source projects claim themselves as _the ultimate blogging platform_,
 but since I'm a client-side and js enthusiast I couldn't settle with any old school CMS;  

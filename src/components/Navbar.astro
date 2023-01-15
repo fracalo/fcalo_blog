@@ -9,7 +9,7 @@ import Menuicon from './Menuicon.astro'
         <a
             href={Astro.url.origin}
         >
-            <h1 class='p-2 px-6 text-xl'>Outskirt Dev</h1>
+            <h1 class='p-2 px-6 navbar-title'>Outskirt Dev</h1>
         </a>
     </div>
     <Menuicon />
@@ -20,5 +20,10 @@ import Menuicon from './Menuicon.astro'
         background: rgb(var(--background));
         height: 4rem;
         border-bottom: 1px solid #ddd;
+    }
+    .navbar-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        white-space: nowrap;
     }
 </style>

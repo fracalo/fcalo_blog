@@ -5,13 +5,13 @@ summary: An easy pattern for dealing with internazionalization in react.
 category: [react, programming]
 layout: ../../../layouts/LayoutMdx.astro
 ---
-import { Image } from '@astrojs/image/components'
+import { Picture } from '@astrojs/image/components'
 import babelFish from './babel-fish.png'
 
 
 In its simplest declination I18n means providing a value from a dictionary based on a key.  
 
-<Image src={babelFish} alt='request animation from'/>
+<Picture src={babelFish} alt='request animation from' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 So the idea here is to leverage react context to provide the dictionary,
 and then provide the value to our application through a utility function,
