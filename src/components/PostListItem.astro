@@ -5,9 +5,10 @@ type Props = {
     date: string;
     readingTime: string;
     isLast: boolean;
-    url: URL
+    url: URL,
+    category: Array<string>
 }
-const { title, summary, date, readingTime, isLast, url } = Astro.props
+const { title, summary, date, readingTime, isLast, url, category = [] } = Astro.props
 
 let formattedDate = null
 if (date) {
@@ -22,7 +23,14 @@ if (date) {
             { title }
         </h2>
     </a>
-    <div class='flex text-md text-gray-500 my-2'>
+    {
+        category.map(x => (
+            <a class='text-sm font-semibold pr-2 text-gray-700' href={new URL(`category/${x.toLowerCase()}`, Astro.url)}>
+                #{x}
+            </a>
+        ))
+    }
+    <div class='flex text-md text-gray-500 mb-2'>
         <p class='pr-2'>{formattedDate}</p>
         <p class='pr-2'>~</p>
         <p>{readingTime}</p>

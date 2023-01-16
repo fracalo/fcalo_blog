@@ -1,0 +1,48 @@
+---
+import type { Post } from '../../utils/posts'
+import Layout from '../../layouts/Layout.astro';
+import PostsList from '../../components/PostsList.astro'
+import { 
+    pageSize,
+    postCategories
+} from '../../utils/posts'
+
+
+export const getStaticPaths = async () => {
+    const posts = await Astro.glob<Post>('../../pages/blog/**/*.{mdx,md}')
+
+    const postsByCategory = postCategories(posts)
+
+    const categoryRootPages = Object.keys(postsByCategory)
+        .map(category => ({params: {path: category}}))
+
+    const pagedPages = Object.entries(postsByCategory)
+        .flatMap(([k, v]) => {
+            const catPages = Math.ceil(v.length / pageSize)
+            return Array.from({length: catPages})
+                .map((_, i) => ({params: {path: `${k}/${i + 1}`}}))
+         })
+
+    return [...categoryRootPages, ...pagedPages]
+}
+
+
+const { path } = Astro.params 
+const [category, page] = path!.split('/')
+const title = `Blog category ${category} page ${page}`
+
+const { VITE_SITE_DESC: desc } = import.meta.env
+const pageNumber = page ? Number(page) : undefined
+---
+
+<Layout title={title} description={`${category} page ${page} - ${desc}`}>
+    <h1 class='section-title py-12'>
+        {path}
+    </h1>
+	<main>
+        <PostsList page={pageNumber} category={category}/>
+	</main>
+</Layout>
+
+<style>
+</style>

@@ -1,78 +1,117 @@
 ---
+import { Post, postCategories } from "../utils/posts";
 const menuRoutes = [
     {
         text: "About",
-        url: "/blog/about"
-    }
-]
+        url: "/blog/about",
+    },
+];
+
+const posts = await Astro.glob<Post>("../pages/blog/**/*.{mdx,md}");
+const postsByCategory = postCategories(posts);
 ---
 
-<div class='wrap'>
-    <svg class='svg' viewBox="-80 -80 160 160" >
-        <line class='menu-line' x1='-40' y1='-20' x2='40' y2='-20' stroke-width='10' stroke-linecap="round" /> 
-        <line class='menu-line' x1='-40' y1='20' x2='40' y2='20' stroke-width='10' stroke-linecap="round" /> 
-        <path class='close-path' d="M-20 20 L20 0 L-20 -20" stroke-width='10' stroke-linecap="round" stroke-linejoin="round" fill='transparent'/>
+<div class="wrap">
+    <svg class="svg" viewBox="-80 -80 160 160">
+        <line
+            class="menu-line"
+            x1="-40"
+            y1="-20"
+            x2="40"
+            y2="-20"
+            stroke-width="10"
+            stroke-linecap="round"></line>
+        <line
+            class="menu-line"
+            x1="-40"
+            y1="20"
+            x2="40"
+            y2="20"
+            stroke-width="10"
+            stroke-linecap="round"></line>
+        <path
+            class="close-path"
+            d="M-20 20 L20 0 L-20 -20"
+            stroke-width="10"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="transparent"></path>
     </svg>
 </div>
-<menu class='menu'>
- <div class='menu-header'></div>
- <div class='menu-content'> 
-    {menuRoutes.map(x => (
-        <ul class='pt-4'>
-            <li>
-                <a href={new URL(x.url, Astro.url)}>
-                    {x.text}
+<menu class="menu">
+    <div class="menu-header"></div>
+    <ul class="menu-content py-6 px-4">
+        {
+            menuRoutes.map((x) => (
+                <li class="py-2 flex hover:text-gray-400 transition-all ">
+                    <a class="flex-1" href={new URL(x.url, Astro.url)}>
+                        {x.text}
+                    </a>
+                </li>
+            ))
+        }
+    </ul>
+    <div class="menu-categories py-6 px-4">
+        <h3 class="py-2">Categories:</h3>
+        <div class='chip-wrap'>
+        {
+            Object.entries(postsByCategory).map(([k, v]) => (
+                <a
+                    class="transition-all hover:bg-gray-400 text-sm chip"
+                    href={new URL(`/category/${k.toLowerCase()}`, Astro.url)}
+                >
+                    {k}
                 </a>
-            </li>
-        </ul>
-    ))}
- </div>
+            ))
+        }
+        <div>
+    </div>
 </menu>
 
 <script>
-    import { menuStore } from '../store/menuStore.ts'
+    import { menuStore } from "../store/menuStore.ts";
 
-    const lsKey = 'od-menuState'
-    let menuState = (window.sessionStorage.getItem(lsKey) || 'close') as 'open' | 'close' 
-    let open = menuState === 'open'
-    const wrap = document.querySelector('.wrap') as HTMLElement
-    const menu = document.querySelector('.menu') as HTMLElement
-    const svg = document.querySelector('.svg') as HTMLElement
+    const lsKey = "od-menuState";
+    let menuState = (window.sessionStorage.getItem(lsKey) || "close") as
+        | "open"
+        | "close";
+    let open = menuState === "open";
+    const wrap = document.querySelector(".wrap") as HTMLElement;
+    const menu = document.querySelector(".menu") as HTMLElement;
+    const svg = document.querySelector(".svg") as HTMLElement;
 
-    setMenuState()
+    setMenuState();
 
-    wrap.addEventListener('click', () => { 
-        open = !open 
-        setMenuState()
-        window.sessionStorage.setItem(lsKey, open ? 'open' : 'close')
-    })
+    wrap.addEventListener("click", () => {
+        open = !open;
+        setMenuState();
+        window.sessionStorage.setItem(lsKey, open ? "open" : "close");
+    });
 
-    function setMenuState () {
-       if (open){
-           reveilMenu()
-           return 
-       }
-       closeMenu()
+    function setMenuState() {
+        if (open) {
+            reveilMenu();
+            return;
+        }
+        closeMenu();
     }
 
+    function closeMenu() {
+        menu.classList.remove("show");
+        svg.classList.remove("show");
+        menuStore.set("close");
+    }
+    function reveilMenu() {
+        menu.classList.add("show");
+        svg.classList.add("show");
+        menuStore.set("open");
+    }
 
-    function closeMenu () {
-        menu.classList.remove('show')
-        svg.classList.remove('show')
-        menuStore.set('close')
-    } 
-    function reveilMenu () {
-        menu.classList.add('show')
-        svg.classList.add('show')
-        menuStore.set('open')
-    } 
-    
     setTimeout(() => {
-        menu.style.transition = '.2s all'
-        menu.style.visibility = 'visible'
-        svg.style.visibility = 'visible'
-    },100)
-
+        menu.style.transition = ".2s all";
+        menu.style.visibility = "visible";
+        svg.style.visibility = "visible";
+    }, 100);
 </script>
 
 <style>
@@ -80,7 +119,7 @@ const menuRoutes = [
         height: 4rem;
         width: 4rem;
         margin-left: auto;
-        transition: .3s all;
+        transition: 0.3s all;
         cursor: pointer;
         z-index: 1;
     }
@@ -90,7 +129,7 @@ const menuRoutes = [
     .svg.show .menu-line {
         stroke: transparent;
     }
-    .svg.show  .close-path{
+    .svg.show .close-path {
         stroke: #fff;
     }
 
@@ -116,7 +155,7 @@ const menuRoutes = [
         right: 0;
         translate: 100%;
         visibility: hidden;
-        min-width: 10rem;
+        width: 12rem;
         background: rgb(var(--dark));
         color: #fff;
         height: 100%;
@@ -127,7 +166,21 @@ const menuRoutes = [
     .menu.show {
         translate: 0;
     }
+    .chip-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem
+    }
+    .chip {
+        color: rgb(var(--dark));
+        border-radius: 1rem;
+        padding: .03rem .3rem;
+        margin-top: .1rem;
+        margin-bottom: .1rem;
+        background: #eee;
+    }
     .menu-content {
-        padding: 0 2rem 0 1rem;
+    }
+    .menu-categories {
     }
 </style>

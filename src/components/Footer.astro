@@ -10,7 +10,7 @@ const homeUrl = new URL('', Astro.url);
 ---
 <footer class="p-2 mb-4 sm:mb-0 mt-10 py-10 flex justify-center border-t border-gray-300">
     <div class="wrap flex-col md:flex-row gap-2 md:gap-0">
-        <a href={homeUrl} >
+        <a class='md:mr-auto' href={homeUrl} >
             <p><strong>Francesco Calò</strong> is Outskirt Dev</p>
         </a>
         <a href={homeUrl} >
@@ -19,7 +19,7 @@ const homeUrl = new URL('', Astro.url);
             </div>
         </a>
         <a href={homeUrl} >
-        <div class='contact-wrap flex'>
+        <div class='contact-wrap flex md:ml-auto'>
         {
             contacts.map(x => (
                 <a class='contacts' href={x.href}>

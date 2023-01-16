@@ -19,9 +19,11 @@ export const getStaticPaths = async () => {
 const { page } = Astro.params 
 const pageNumber = Number(page)
 const title = `Blog page ${pageNumber}`
+
+const { VITE_SITE_DESC: desc } = import.meta.env
 ---
 
-<Layout title={title}>
+<Layout title={title} description={`Blog page ${page} - ${desc}`}>
 	<main>
         <PostsList page={pageNumber} />
 	</main>

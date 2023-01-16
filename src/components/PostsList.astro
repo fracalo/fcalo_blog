@@ -9,9 +9,10 @@ import {
 import Pagination from './Pagination.astro';
 
 type Props = {
-    page?: number,
+    page?: number | undefined,
+    category?: string | undefined
 }
-const { page = 1 } = Astro.props
+const { page = 1, category } = Astro.props
 
 let posts: Array<Post> = []
 try {
@@ -20,11 +21,21 @@ try {
 catch (e) {
     console.log(e)
 }
+if (category) {
+    posts = posts.filter(x => x.frontmatter.category && x.frontmatter.category.some(
+        c => c.toLowerCase() === category
+    ))
+}
+
 const orderedPosts = orderPosts(posts)
 const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1)
 const totalPages = Math.ceil(posts.length/pageSize)
-const nextLink = totalPages > page ? new URL(`/${page+1}`, Astro.url) : undefined
-const prevLink = page > 1 ? new URL(`/${page-1}`, Astro.url) : undefined
+
+const nextBase = category ? `/category/${category}/${page+1}`: `/${page+1}`
+const nextLink = totalPages > page ? new URL(nextBase, Astro.url) : undefined
+
+const prevBase = category ? `/category/${category}/${page-1}`: `/${page-1}`
+const prevLink = page > 1 ? new URL(prevBase, Astro.url) : undefined
 ---
 
 {pagedPosts.map((x: Post, i: number) => (
@@ -32,6 +43,7 @@ const prevLink = page > 1 ? new URL(`/${page-1}`, Astro.url) : undefined
         title={x.frontmatter.title} 
         summary={x.frontmatter.summary} 
         date={x.frontmatter.date}
+        category={x.frontmatter.category}
         readingTime={x.readingTime?.text}
         isLast={i === (pagedPosts.length - 1)}
         url={new URL(x.url!, Astro.url)}

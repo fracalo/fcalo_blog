@@ -22,6 +22,7 @@ function shiftHeadingDown() {
 
 // https://astro.build/config
 export default defineConfig({
+     site: 'https://fcalo.com',
     markdown: {
         extendDefaultPlugins: true,
         draft: true,
