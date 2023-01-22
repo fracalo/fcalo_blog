@@ -1,48 +1,49 @@
 ---
-import "@fontsource/kiwi-maru"
-import '../css/styles.css'
-import Navbar from '../components/Navbar.astro'
+//import "@fontsource/kiwi-maru"
+import "../css/styles.css";
+import Navbar from "../components/Navbar.astro";
 
 type Props = {
-    title: string,
-    description?: string | undefined
-}
+    title: string;
+    description?: string | undefined;
+};
 
 const { title, description } = Astro.props;
-const { VITE_SITE_DESC: fallbackDesc } = import.meta.env
-
+const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
 ---
+
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
-		<meta name="generator" content={`${Astro.generator} and me`} />
-		<meta name="description" content={description || fallbackDesc} />
-		<title>{title}</title>
-	</head>
-	<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <meta name="generator" content={`${Astro.generator} and me`} />
+        <meta name="description" content={description || fallbackDesc} />
+        <title>{title}</title>
+    </head>
+    <body>
         <Navbar />
-        <div class='main-wrapper'>
-            <slot>
+        <div class="main-wrapper">
+            <slot />
         </div>
-	</body>
+    </body>
+    <script defer={true}>
+        import { menuStore, MenuStoreStates } from "../store/menuStore.ts";
+
+        const mainWrapper = document.querySelector(
+            ".main-wrapper"
+        ) as HTMLElement;
+        const menu = document.querySelector(".menu") as HTMLElement;
+        const menuWidth = menu.getBoundingClientRect().width;
+        menuStore.subscribe((v: MenuStoreStates) => {
+            mainWrapper.style.paddingRight =
+                v === "open" ? `${menuWidth}px` : "initial";
+        });
+
+        setTimeout(() => {
+            mainWrapper.style.transition = ".2s all";
+            mainWrapper.style.visibility = "visible";
+        }, 100);
+    </script>
 </html>
-<script>
-    import { menuStore, MenuStoreStates  } from '../store/menuStore.ts'
-
-    
-    const mainWrapper = document.querySelector('.main-wrapper') as HTMLElement
-    const menu = document.querySelector('.menu') as HTMLElement
-    const menuWidth = menu.getBoundingClientRect().width
-    menuStore.subscribe((v: MenuStoreStates)=> {
-        mainWrapper.style.paddingRight = v === 'open' ? `${menuWidth}px` : 'initial'
-    })
-    
-    setTimeout(() => {
-        mainWrapper.style.transition = '.2s all'
-        mainWrapper.style.visibility = 'visible'
-    },100)
-
-</script>

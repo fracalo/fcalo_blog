@@ -38,7 +38,7 @@ body {
 
 .main-wrapper {
     overflow-y: auto;
-    visibility: hidden;
+   /* visibility: hidden;*/
 }
 .content-wrapper {
     width: 66vw

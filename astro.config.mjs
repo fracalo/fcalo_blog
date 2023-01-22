@@ -10,6 +10,14 @@ import { visit } from 'unist-util-visit';
 
 /** @type {import('unified').Plugin<[], import('hast').Root>} */
 import image from "@astrojs/image";
+import sitemap from "@astrojs/sitemap";
+import prefetch from "@astrojs/prefetch";
+import critters from "astro-critters";
+import partytown from "@astrojs/partytown";
+
+
+const { VITE_SITE } = import.meta.env;
+
 function shiftHeadingDown() {
   return tree => {
     visit(tree, 'element', node => {
@@ -20,32 +28,29 @@ function shiftHeadingDown() {
   };
 }
 
-// https://astro.build/config
+if (! VITE_SITE) {
+    console.log('need to provide VITE_SITE for build')
+    exit(2)
+}
 export default defineConfig({
-     site: 'https://fcalo.com',
-    markdown: {
-        extendDefaultPlugins: true,
-        draft: true,
-        shikiConfig: {
-            // Choose from Shiki's built-in themes (or add your own)
-            // https://github.com/shikijs/shiki/blob/main/docs/themes.md
-            theme: 'nord',
-            // Add custom languages
-            // Note: Shiki has countless langs built-in, including .astro!
-            // https://github.com/shikijs/shiki/blob/main/docs/languages.md
-            //langs: [],
-            // Enable word wrap to prevent horizontal scrolling
-            wrap: true,
-        }
-    },
-    integrations: [mdx({
-        extendDefaultPlugins: true,
-        draft: true,
-        remarkPlugins: [rehypeAccessibleEmojis, readingTime, readingMdxTime],
-        rehypePlugins: [shiftHeadingDown]
-    }), tailwind(), image()],
-    server: {
-        host: true,
-        port: 3002
+  site: VITE_SITE,
+  markdown: {
+    extendDefaultPlugins: true,
+    draft: true,
+    shikiConfig: {
+      theme: 'nord',
+      //langs: [],
+      wrap: true
     }
+  },
+  integrations: [mdx({
+    extendDefaultPlugins: true,
+    draft: true,
+    remarkPlugins: [rehypeAccessibleEmojis, readingTime, readingMdxTime],
+    rehypePlugins: [shiftHeadingDown]
+  }), tailwind(), image(), sitemap(), prefetch(), critters(), partytown()],
+  server: {
+    host: true,
+    port: 3002
+  }
 });

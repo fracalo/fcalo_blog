@@ -53,134 +53,136 @@ const postsByCategory = postCategories(posts);
     </ul>
     <div class="menu-categories py-6 px-4">
         <h3 class="py-2">Categories:</h3>
-        <div class='chip-wrap'>
-        {
-            Object.entries(postsByCategory).map(([k, v]) => (
-                <a
-                    class="transition-all hover:bg-gray-400 text-sm chip"
-                    href={new URL(`/category/${k.toLowerCase()}`, Astro.url)}
-                >
-                    {k}
-                </a>
-            ))
-        }
-        <div>
+        <div class="chip-wrap">
+            {
+                Object.entries(postsByCategory).map(([k, v]) => (
+                    <a
+                        class="transition-all hover:bg-gray-400 text-sm chip"
+                        href={
+                            new URL(`/category/${k.toLowerCase()}`, Astro.url)
+                        }
+                    >
+                        {k}
+                    </a>
+                ))
+            }
+            <div></div>
+        </div>
+
+        <script defer={true}>
+            import { menuStore } from "../store/menuStore.ts";
+
+            const lsKey = "od-menuState";
+            let menuState = (window.sessionStorage.getItem(lsKey) ||
+                "close") as "open" | "close";
+            let open = menuState === "open";
+            const wrap = document.querySelector(".wrap") as HTMLElement;
+            const menu = document.querySelector(".menu") as HTMLElement;
+            const svg = document.querySelector(".svg") as HTMLElement;
+
+            wrap.addEventListener("click", () => {
+                open = !open;
+                setMenuState();
+                window.sessionStorage.setItem(lsKey, open ? "open" : "close");
+            });
+
+            setMenuState();
+
+            function setMenuState() {
+                if (open) {
+                    reveilMenu();
+                    return;
+                }
+                closeMenu();
+            }
+
+            function closeMenu() {
+                menu.classList.remove("show");
+                svg.classList.remove("show");
+                menuStore.set("close");
+            }
+            function reveilMenu() {
+                menu.classList.add("show");
+                svg.classList.add("show");
+                menuStore.set("open");
+            }
+
+            setTimeout(() => {
+                menu.style.transition = ".2s all";
+                menu.style.visibility = "visible";
+                svg.style.visibility = "visible";
+            }, 100);
+        </script>
+
+        <style>
+            .wrap {
+                height: 4rem;
+                width: 4rem;
+                margin-left: auto;
+                transition: 0.3s all;
+                cursor: pointer;
+                z-index: 1;
+            }
+            .menu-line {
+                stroke: #000;
+            }
+            .svg.show .menu-line {
+                stroke: transparent;
+            }
+            .svg.show .close-path {
+                stroke: #fff;
+            }
+
+            .wrap:hover {
+                background: rgb(var(--accent));
+            }
+            .svg {
+                position: relative;
+                z-index: 1;
+                height: 100%;
+                width: 100%;
+                visibility: hidden;
+            }
+            .menu-header {
+                height: 4rem;
+                border-bottom: 1px solid #fff;
+            }
+            .menu {
+                border-left: 1px solid #ddd;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                translate: 100%;
+                visibility: hidden;
+                width: 12rem;
+                background: rgb(var(--dark));
+                color: #fff;
+                height: 100%;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            .menu.show {
+                translate: 0;
+            }
+            .chip-wrap {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .chip {
+                color: rgb(var(--dark));
+                border-radius: 1rem;
+                padding: 0.01rem 0.3rem 0.04rem;
+                margin-top: 0.1rem;
+                margin-bottom: 0.1rem;
+                background: #cdcece;
+            }
+            .menu-content {
+            }
+            .menu-categories {
+            }
+        </style>
     </div>
 </menu>
-
-<script>
-    import { menuStore } from "../store/menuStore.ts";
-
-    const lsKey = "od-menuState";
-    let menuState = (window.sessionStorage.getItem(lsKey) || "close") as
-        | "open"
-        | "close";
-    let open = menuState === "open";
-    const wrap = document.querySelector(".wrap") as HTMLElement;
-    const menu = document.querySelector(".menu") as HTMLElement;
-    const svg = document.querySelector(".svg") as HTMLElement;
-
-    setMenuState();
-
-    wrap.addEventListener("click", () => {
-        open = !open;
-        setMenuState();
-        window.sessionStorage.setItem(lsKey, open ? "open" : "close");
-    });
-
-    function setMenuState() {
-        if (open) {
-            reveilMenu();
-            return;
-        }
-        closeMenu();
-    }
-
-    function closeMenu() {
-        menu.classList.remove("show");
-        svg.classList.remove("show");
-        menuStore.set("close");
-    }
-    function reveilMenu() {
-        menu.classList.add("show");
-        svg.classList.add("show");
-        menuStore.set("open");
-    }
-
-    setTimeout(() => {
-        menu.style.transition = ".2s all";
-        menu.style.visibility = "visible";
-        svg.style.visibility = "visible";
-    }, 100);
-</script>
-
-<style>
-    .wrap {
-        height: 4rem;
-        width: 4rem;
-        margin-left: auto;
-        transition: 0.3s all;
-        cursor: pointer;
-        z-index: 1;
-    }
-    .menu-line {
-        stroke: #000;
-    }
-    .svg.show .menu-line {
-        stroke: transparent;
-    }
-    .svg.show .close-path {
-        stroke: #fff;
-    }
-
-    .wrap:hover {
-        background: rgb(var(--accent));
-    }
-    .svg {
-        position: relative;
-        z-index: 1;
-        height: 100%;
-        width: 100%;
-        visibility: hidden;
-    }
-    .menu-header {
-        height: 4rem;
-        border-bottom: 1px solid #fff;
-    }
-    .menu {
-        border-left: 1px solid #ddd;
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        translate: 100%;
-        visibility: hidden;
-        width: 12rem;
-        background: rgb(var(--dark));
-        color: #fff;
-        height: 100%;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-    .menu.show {
-        translate: 0;
-    }
-    .chip-wrap {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .5rem
-    }
-    .chip {
-        color: rgb(var(--dark));
-        border-radius: 1rem;
-        padding: .03rem .3rem;
-        margin-top: .1rem;
-        margin-bottom: .1rem;
-        background: #eee;
-    }
-    .menu-content {
-    }
-    .menu-categories {
-    }
-</style>
