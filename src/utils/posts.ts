@@ -7,6 +7,7 @@ type MyFrontmatter = {
   title: string;
   summary: string;
   date: string;
+  draft?: boolean;
 };
 
 type Post = MarkdownInstance<MyFrontmatter> & { readingTime: { text: string } };

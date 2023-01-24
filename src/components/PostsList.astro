@@ -21,6 +21,9 @@ try {
 catch (e) {
     console.log(e)
 }
+if (!import.meta.env.DEV) {
+    posts = posts.filter(x => !x.frontmatter.draft)
+}
 if (category) {
     posts = posts.filter(x => x.frontmatter.category && x.frontmatter.category.some(
         c => c.toLowerCase() === category
