@@ -1,6 +1,5 @@
 ---
-//import "@fontsource/kiwi-maru"
-import "../css/styles.css";
+import "../css/styles.scss";
 import Navbar from "../components/Navbar.astro";
 
 type Props = {
@@ -43,7 +42,9 @@ const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
 
         setTimeout(() => {
             mainWrapper.style.transition = ".2s all";
-            mainWrapper.style.visibility = "visible";
         }, 100);
     </script>
+    <!--<script async={true}>
+        import "@fontsource/kiwi-maru"
+    </script>-->
 </html>

@@ -36,13 +36,17 @@ body {
     flex-direction: column;
 }
 
+
 .main-wrapper {
     overflow-y: auto;
-   /* visibility: hidden;*/
 }
+
 .content-wrapper {
-    width: 66vw
-    
+    width: 95vw;
+    overflow-x: hidden;
+    @media (min-width: 640px) {
+         width: 66vw;
+    }
 }
 
 code {
@@ -59,8 +63,11 @@ code {
 
 .section-title {
     font-family: "Kiwi Maru", serif;
-    font-size: 4rem;
+    font-size: 3rem;
     font-weight: 500;
+    @media (min-width: 640px) {
+        font-size: 4rem;
+    }
 }
 
 .blog-article  {
@@ -120,7 +127,6 @@ code {
 }
 .blog-article a {
     color: rgb(var(--link));
-    /*text-decoration: underline;*/
     border-bottom: 2px solid ; 
     border-bottom-color: rgb(var(--link));
     padding-bottom: .1rem;
@@ -138,17 +144,3 @@ code {
     margin: 1.5rem 0 2.5rem;
     padding: 1rem .5rem
 }
-/*
-.blog-article blockquote:after {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    content: '';
-    width: 0;
-    height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-left: 10px solid rgb(var(--accent));
-}
-*/

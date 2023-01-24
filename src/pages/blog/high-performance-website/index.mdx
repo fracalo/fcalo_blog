@@ -1,0 +1,64 @@
+---
+title: Building a high performance website
+summary: How to achieve the mythological lighthouse score of 100.
+category: [web, browser, javascript]
+date: '2023-01-23T08:40:32.169Z'
+layout: ../../../layouts/LayoutMdx.astro
+draft: true
+---
+
+I've had this blog for quite a while, although I'm not a professional content creator I do my best at documenting my work,  
+It helps me organize my thoughts and hopefully it might help others passing by.
+
+But the intrinsic motivitation for writing content is another one, I build web products,  
+and this blog is just me prototyping with whatever web-related unicorn I want to play with.
+
+And today I want to see how I can improve my blog's lighthouse score,  
+if you don't have web-dev experience and not know lighthouse you're probably not ready to go down the rabbit hole yet, 
+some literature you should go through are:
+  - [Lighthouse documentation](https://developer.chrome.com/docs/lighthouse/overview/)
+  - [Progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement)
+  - [Mdn web docs](https://developer.mozilla.org/en-US/docs/Learn)
+
+---
+
+### Custom vs fandom
+
+Web development (like most other fields) is made of trends,  
+in this sector many JS frameworks are born and die in the lifespan of a butterfly.  
+Last years have been dominated by React, and the SPA bandwagon, these are awesome if you need to build applications,  
+nethertheless they bring in many issues in the context of optimization:
+    - The amount of javascript source files you need to download is relatively high.
+    - Browser side routing are frowned upon by crawlers.
+    - [Virtual dom](https://reactjs.org/docs/faq-internals.html) frameworks  abstract away from the real dom through js,  
+      this translates to extra resources being spent by the browser and ultimately the device.
+
+We certainly don't need [SPA](https://en.wikipedia.org/wiki/Single-page_application) capabilities to display the blog,  
+but building a custom site that generates html we would need to reinvent the wheel in terms of DX and scaffolding,  
+eventually I ended up choosing [Astrojs](https://astro.build/),
+which transforms a component architecture into a static resource website with a state of the art compilation stage.  
+being specifically built for displaying static content, it also adds lots of optimization addons.
+
+
+....
+
+
+
+
+
+
+
+
+
+----
+
+What i learned:
+
+slows-down:
+- media-queries 
+- relative line-height 
+- javascript
+
+
+
+

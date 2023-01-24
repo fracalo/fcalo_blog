@@ -3,6 +3,7 @@ import type { Post } from "../../utils/posts";
 import Layout from "../../layouts/Layout.astro";
 import PostsList from "../../components/PostsList.astro";
 import { pageSize, postCategories } from "../../utils/posts";
+import SectionTitle from "../../components/SectionTitle.astro";
 
 export const getStaticPaths = async () => {
     const posts = await Astro.glob<Post>("../../pages/blog/**/*.{mdx,md}");
@@ -38,9 +39,7 @@ const pageNumber = page ? Number(page) : undefined;
     title={title}
     description={`blog category ${category} ${page ? `page ${page} ` : ""}- ${desc}`}
 >
-    <h1 class="section-title py-12">
-        {path}
-    </h1>
+    <SectionTitle title={path} />
     <main>
         <PostsList page={pageNumber} category={category} />
     </main>

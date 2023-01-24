@@ -1,22 +1,12 @@
 ---
-
-import Layout from '../layouts/Layout.astro';
-import PostsList from '../components/PostsList.astro'
-
-
+import Layout from "../layouts/Layout.astro";
+import PostsList from "../components/PostsList.astro";
+import SectionTitle from "../components/SectionTitle.astro";
 ---
+
 <Layout title="Outskirt Web Development">
-    <h1 class='section-title py-12'>
-        Blog
-    </h1>
+    <SectionTitle title="Blog" />
     <div>
         <PostsList />
     </div>
 </Layout>
- 
-<style>
-    .custom-head{
-        /*background: rgb(var(--dark));*/
-        height: 500px
-    }
-</style>
