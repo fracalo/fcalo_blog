@@ -44,7 +44,11 @@ const postsByCategory = postCategories(posts);
         {
             menuRoutes.map((x) => (
                 <li class="py-2 flex hover:text-gray-400 transition-all ">
-                    <a class="flex-1" href={new URL(x.url, Astro.url)}>
+                    <a
+                        rel="prefetch"
+                        class="flex-1"
+                        href={new URL(x.url, Astro.url)}
+                    >
                         {x.text}
                     </a>
                 </li>
@@ -57,6 +61,7 @@ const postsByCategory = postCategories(posts);
             {
                 Object.entries(postsByCategory).map(([k, v]) => (
                     <a
+                        rel="prefetch"
                         class="transition-all hover:bg-gray-400 text-sm chip"
                         href={
                             new URL(`/category/${k.toLowerCase()}`, Astro.url)

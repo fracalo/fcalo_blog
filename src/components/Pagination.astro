@@ -1,48 +1,23 @@
 ---
 type Props = {
-    page: number,
-    totalPages: number,
-    prevLink: URL | undefined,
-    nextLink: URL | undefined,
-}
+    page: number;
+    totalPages: number;
+    prevLink: URL | undefined;
+    nextLink: URL | undefined;
+};
 
-import WrapperNode from './WrapperNode.astro'
+import ToggleableAnchor from "./ToggleableAnchor.astro";
 
-const { page, totalPages, prevLink, nextLink } = Astro.props
+const { page, totalPages, prevLink, nextLink } = Astro.props;
 
-const disabledNext = !nextLink
-const disabledPrev = !prevLink
 ---
-<div class='pt-6 flex justify-between items-center'>
-    <p class='text-sm text-gray-800 font-semibold'>Page {page} / {totalPages}</p>
+
+<div class="pt-6 flex justify-between items-center">
+    <p class="text-sm text-gray-800 font-semibold">
+        Page {page} / {totalPages}
+    </p>
     <div class="inline-flex">
-        <WrapperNode tag={Boolean(prevLink) ? 'form' : 'div'}>
-                <button
-                    type='submit'
-                    formaction={prevLink && prevLink.toString()}
-                    class:list={["bg-white hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-l shadow border border-gray-200", 
-                        {
-                          'cursor-not-allowed': disabledPrev,
-                          'opacity-50': disabledPrev,
-                        }
-                    ]}
-                >
-                    Prev
-                </button>
-        </WrapperNode>
-        <WrapperNode tag={Boolean(nextLink) ? 'form' : 'div'}>
-                <button
-                    type='submit'
-                    formaction={nextLink && nextLink.toString()}
-                    class:list={["bg-white hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-r shadow border border-l-transparent border-gray-200", 
-                        {
-                          'cursor-not-allowed': disabledNext,
-                          'opacity-50': disabledNext,
-                        }
-                    ]} 
-                >
-                    Next
-                </button>
-        </WrapperNode>
+        <ToggleableAnchor text="Prev" href={prevLink && prevLink.toString()} />
+        <ToggleableAnchor text="Next" href={nextLink && nextLink.toString()} />
     </div>
 </div>

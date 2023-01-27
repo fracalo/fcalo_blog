@@ -7,6 +7,9 @@ layout: ../../../layouts/LayoutMdx.astro
 draft: true
 ---
 
+import lighthouse100 from './lighthouse100.png'
+import { Picture } from '@astrojs/image/components'
+
 I've had this blog for quite a while, although I'm not a professional content creator I do my best at documenting my work,  
 It helps me organize my thoughts and hopefully it might help others passing by.
 
@@ -22,7 +25,7 @@ some literature you should go through are:
 
 ---
 
-### Custom vs fandom
+## Custom vs fandom
 
 Web development (like most other fields) is made of trends,  
 in this sector many JS frameworks are born and die in the lifespan of a butterfly.  
@@ -30,34 +33,113 @@ Last years have been dominated by React, and the SPA bandwagon, these are awesom
 nethertheless they bring in many issues in the context of optimization:
     - The amount of javascript source files you need to download is relatively high.
     - Browser side routing are frowned upon by crawlers.
-    - [Virtual dom](https://reactjs.org/docs/faq-internals.html) frameworks  abstract away from the real dom through js,  
-      this translates to extra resources being spent by the browser and ultimately the device.
+    - [Virtual dom](https://reactjs.org/docs/faq-internals.html) frameworks  abstract away from the real dom through js, this translates to extra resources being spent by the browser and ultimately the device.
 
 We certainly don't need [SPA](https://en.wikipedia.org/wiki/Single-page_application) capabilities to display the blog,  
-but building a custom site that generates html we would need to reinvent the wheel in terms of DX and scaffolding,  
+but building a custom process that generates html would mean reinventing the wheel in terms of DX and scaffolding,  
 eventually I ended up choosing [Astrojs](https://astro.build/),
 which transforms a component architecture into a static resource website with a state of the art compilation stage.  
-being specifically built for displaying static content, it also adds lots of optimization addons.
+being specifically built for displaying static content, it fits my requirements, and has a lot of excellent docs that go with it.
 
 
-....
+## First try
+
+<Picture src={lighthouse100} alt='perfect score 100 on lighthouse' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
+
+Actually I cheated a little bit generating this picture, first this is a local preview of the build, second I didn't import the fonts. but apart from that there's everything else (BTW, adding back the fonts back in I hit 99, more on this later).  
+
+The workflow that astro sets up for developing is great, each part of the app is divided in components, the dev environment is powered by vite (blazingly fast), while the production build is a crafty custom process.  
+routes are handlend on a resource base, during development you can define them similarly to nextjs using `getStaticPath`  
+and then transformed during the build.  
+There is also a SSR variant, but I didn't use it.
+
+In my case I used many addons to improve performance and DX:
+    - Styles are handled in SASS.
+    - Using tailwind through addon.
+    - Content is written in MDX (pimped with rehype and remark).
+    - Images are dealt with the astrojs [Picture](https://docs.astro.build/en/guides/images/#picture--) component.
+    - Prefetch has it's addon.
+    - Partytown to offload main thread.
+    - Critter to inline only the required css.
+    - Sitemap generated automatically by it's addon.
+    - PWA is handled custom with workbox.
+
+Using addons is plug and play, everything fell into place quite easily, and custom additions are really easy to implement.
+
+
+## Tuning
+to achieve high performance some fine tuning is needed, specially optimizing what lighthouse defines as .
+
+
+### Moving parts
+
+I stripped extra scripts to the bone, but managed to build a custom menu:  
+there's a component dealing with the opening/closing of the drawer, and the main-content component reacts with some width adjustment.  
+Both components hook up to a [nanostore](https://github.com/nanostores/nanostores) in order to keep that nice separation keen to every component architect.
+One thing to watch out for is moving nodes around during first render, this slows LCP ([Largest Contentful Paint](https://web.dev/optimize-lcp/#:~:text=Largest%20Contentful%20Paint%20(LCP)%20is,is%20rendered%20within%20the%20viewport))
+which is one of the main metric lighthouse uses to define the score.
+In this regards I just check a flag set in sessionStorage to understand, and align, the state of the menu ('open' | 'close').
+Furthermore, all the custom scripts load with defer attribute set to avoid blocking the page parsing.
+
+### No blocking fonts
+Custom fonts on a site is something you'll probably need,
+but loading the fonts synchronously dramatically increased the size of my page.
+Import through [fontsource](https://fontsource.org) get added directly as a stylesheet and,
+together with critters, this translates to copying the font source directly in you main html.
+
+in Astro this can be avoided simply importing the font inside an [`async`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-async) script element,
+this will parallelize the execution of the script which add the style node for the fonts:
+```html
+    <script async={true}>
+        import "@fontsource/kiwi-maru"
+    </script>
+```
+instead of 
+
+```js
+import "@fontsource/kiwi-maru";
+```
+
+This tweak reduces the page size by 92K with no UI visible difference.
+```
+32K    async.html
+144K   sync.html
+```
 
 
 
+### Critters
+this tool statically analyzes the page source and only imports the required css inlining it the html page,
+It reduces the total amount of CSS and drops extra network transactions.
+[The integration with astro is seamless.](https://github.com/astro-community/astro-critters#readme)
+
+### Partytown
+it facilitates the loading of all non critical scripts through the use of a service-worker it controls.
+I use it mainly for Analytics.
+
+--------
+
+a link stylesheet element which references the font,
+```
+<link rel="stylesheet" href="/assets/index.8fea2d5d.css" media="print" onload="this.media='all'">
+```
+and impressive 
+by loading sync I mean including the font with a link element ad then referencing font with font-family
 
 
-
-
-
-
-----
-
-What i learned:
-
-slows-down:
-- media-queries 
+slow down ? :  ?
 - relative line-height 
-- javascript
+- don't shift element layout too much on page load
+
+
+
+
+
+
+
+
+
+
 
 
 

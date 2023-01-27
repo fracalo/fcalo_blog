@@ -1,0 +1,25 @@
+---
+type Props = {
+    href?: string | undefined;
+    text: string;
+};
+const { href, text } = Astro.props;
+
+const disabled = !Boolean(href);
+
+const Element = disabled ? "span" : "a";
+---
+
+<Element
+    href={href}
+    rel="prefetch"
+    class:list={[
+        "bg-white hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-l shadow border border-gray-200",
+        {
+            "cursor-not-allowed": disabled,
+            "opacity-50": disabled,
+        },
+    ]}
+>
+    {text}
+</Element>
