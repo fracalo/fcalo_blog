@@ -46,6 +46,20 @@ const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
         }, 100);
     </script>
     <script async={true}>
-        import "@fontsource/kiwi-maru"
+        import "@fontsource/kiwi-maru";
+    </script>
+    <script
+        type="text/partytown"
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-Y1197D77VN"
+    ></script>
+    <script type="text/partytown">
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+
+        gtag("config", "G-Y1197D77VN");
     </script>
 </html>

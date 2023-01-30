@@ -68,7 +68,7 @@ Using addons is plug and play, everything fell into place quite easily, and cust
 
 
 ## Tuning
-to achieve high performance some fine tuning is needed, specially optimizing what lighthouse defines as .
+Here some of the tuning I went through to achieve high performance.
 
 
 ### Moving parts
@@ -105,9 +105,6 @@ This tweak reduces the page size by 92K with no UI visible difference.
 32K    async.html
 144K   sync.html
 ```
-
-
-
 ### Critters
 this tool statically analyzes the page source and only imports the required css inlining it the html page,
 It reduces the total amount of CSS and drops extra network transactions.
@@ -117,14 +114,18 @@ It reduces the total amount of CSS and drops extra network transactions.
 it facilitates the loading of all non critical scripts through the use of a service-worker it controls.
 I use it mainly for Analytics.
 
---------
+### Prefetch
+Wouldn't it be nice if we could preload the page resources we need in order to have them already ready when the user navigates to them?
+Such a [functionality](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload) exists in the browser, unfortunately it's not supported by the [anchor element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a).  
+But this is easily replicable with a script, and astrojs has got you covered with the [prefetch addon](https://github.com/withastro/astro/tree/main/packages/integrations/prefetch),  
+you just need to add a `[rel]='prefetch'` attribute to the a tag that nees prefetching.  
+under the hood the addon will search for all elements with this attribute and, if the connection is not 2g/3g, it will make a request it.  
+ 
 
-a link stylesheet element which references the font,
-```
-<link rel="stylesheet" href="/assets/index.8fea2d5d.css" media="print" onload="this.media='all'">
-```
-and impressive 
-by loading sync I mean including the font with a link element ad then referencing font with font-family
+
+
+
+--------
 
 
 slow down ? :  ?

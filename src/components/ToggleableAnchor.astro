@@ -13,6 +13,7 @@ const Element = disabled ? "span" : "a";
 <Element
     href={href}
     rel="prefetch"
+    aria-label={disabled ? `No ${text} page available` : `Link to ${text} page`}
     class:list={[
         "bg-white hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-l shadow border border-gray-200",
         {

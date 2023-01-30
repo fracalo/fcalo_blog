@@ -1,41 +1,52 @@
 ---
 type Props = {
-    title: string; 
+    title: string;
     summary: string;
     date: string;
     readingTime: string;
     isLast: boolean;
-    url: URL,
-    category: Array<string>
-}
-const { title, summary, date, readingTime, isLast, url, category = [] } = Astro.props
+    url: URL;
+    category: Array<string>;
+};
+const {
+    title,
+    summary,
+    date,
+    readingTime,
+    isLast,
+    url,
+    category = [],
+} = Astro.props;
 
-let formattedDate = null
+let formattedDate = null;
 if (date) {
-    const [_, month, day, year] = new Date(date).toDateString().split(' ')
-    formattedDate = `${month} ${Number(day)}, ${year}`
+    const [_, month, day, year] = new Date(date).toDateString().split(" ");
+    formattedDate = `${month} ${Number(day)}, ${year}`;
 }
 ---
 
 <article>
     <a href={url}>
-        <h2 class='post-title'>
-            { title }
+        <h2 class="post-title">
+            {title}
         </h2>
     </a>
     {
-        category.map(x => (
-            <a rel='prefetch' class='text-sm font-semibold pr-2 text-gray-700' href={new URL(`category/${x.toLowerCase()}`, Astro.url)}>
+        category.map((x) => (
+            <a
+                rel="prefetch"
+                class="text-sm font-semibold pr-2 text-gray-700"
+                href={new URL(`category/${x.toLowerCase()}`, Astro.url)}
+            >
                 #{x}
             </a>
         ))
     }
-    <div class='flex text-md text-gray-500 mb-2'>
-        <p class='pr-2'>{formattedDate}</p>
-        <p class='pr-2'>~</p>
+    <div class="flex text-md text-gray-500 mb-2">
+        <p class="pr-2">{formattedDate}</p>
+        <p class="pr-2">~</p>
         <p>{readingTime}</p>
     </div>
-    <div class='text'> { summary } </div>
-    {!isLast && <hr class='border-transparent mt-6 mb-4' />}
+    <div class="text">{summary}</div>
+    {!isLast && <hr class="border-transparent mt-6 mb-4" />}
 </article>
-
