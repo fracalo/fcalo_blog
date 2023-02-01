@@ -1,0 +1,16 @@
+
+FROM node:16-alpine
+
+WORKDIR /app
+
+RUN npm add --global pnpm
+
+COPY ./package.json  ./
+COPY ./pnpm-lock.yaml  ./
+RUN pnpm install
+
+COPY ./  ./
+
+RUN VITE_SITE=https://fcalo.com && pnpm build
+
+ENTRYPOINT cp -r ./dist/* ./public-def
