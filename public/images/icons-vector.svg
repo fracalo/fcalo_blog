@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 135.46667 135.46667"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a84865, 2022-12-01)"
+   sodipodi:docname="icons-vector.svg"
+   inkscape:export-filename="public/images/icons-192.png"
+   inkscape:export-xdpi="48.767952"
+   inkscape:export-ydpi="48.767952"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     showguides="false"
+     inkscape:zoom="0.42048261"
+     inkscape:cx="23.782197"
+     inkscape:cy="702.76391"
+     inkscape:window-width="1920"
+     inkscape:window-height="1027"
+     inkscape:window-x="1728"
+     inkscape:window-y="62"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="50.055522,93.420034"
+       orientation="1,0"
+       id="guide259"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="63.181192,84.521274"
+       orientation="0,-1"
+       id="guide261"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path127"
+       style="fill:#f43c3c;fill-opacity:1;stroke-width:0.39087"
+       d="M 68.24793,1.8877118 A 65.730916,65.730916 0 0 0 2.5169491,67.618693 65.730916,65.730916 0 0 0 68.24793,133.34968 65.730916,65.730916 0 0 0 133.97891,67.618693 65.730916,65.730916 0 0 0 68.24793,1.8877118 Z m 0.365489,10.8213322 c 0,0 53.520381,2.63207 52.935471,55.275138 -0.58493,52.643068 -53.22827,55.860058 -53.22827,55.860058 z" />
+    <g
+       aria-label="e"
+       transform="scale(1.0660822,0.93801396)"
+       id="text831"
+       style="font-size:47.6544px;fill:#2b0000;stroke-width:3.9712" />
+  </g>
+</svg>

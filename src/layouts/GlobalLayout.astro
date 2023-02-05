@@ -1,14 +1,14 @@
 ---
 import "../css/styles.scss";
 import Navbar from "../components/Navbar.astro";
-//import "@fontsource/kiwi-maru";
 
 type Props = {
+    isRoot: boolean | undefined;
     title: string;
     description?: string | undefined;
 };
 
-const { title, description } = Astro.props;
+const { title, description, isRoot } = Astro.props;
 const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
 ---
 
@@ -21,6 +21,7 @@ const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
         <meta name="generator" content={`${Astro.generator} and me`} />
         <meta name="description" content={description || fallbackDesc} />
         <title>{title}</title>
+        {isRoot && <link rel="manifest" href="/manifest.json" />}
     </head>
     <body>
         <Navbar />
