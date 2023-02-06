@@ -21,7 +21,7 @@ deploy_ec2:
    name: production 
    url: 
  only:
-   - master
+   - main
  script:
      - cd /home/ec2-user/Repos/fcalo-blog
      - git pull
