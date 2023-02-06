@@ -12,21 +12,22 @@
 ## include:
 ## - template: Security/SAST.gitlab-ci.yml
 ## 
+#
 ## stages:
 ##   - deploy
 
 deploy_ec2:
  stage: deploy
  environment:
-   name: production 
+   name: fcalo-blog-astro 
    url: 
  only:
    - main
  script:
-     - cd /home/ec2-user/Repos/fcalo-blog
+     - cd /home/ec2-user/Repos/fcalo-blog-astro
      - git pull
      - docker build -t docker-builder -f DockerfileForBuild .
-     - docker run --name docker-builder-run --mount type=bind,source=/srv/www/fcalo-blog,target=/app/public-def docker-builder
-     - docker rm docker-builder-run
+     - docker run --rm --name docker-builder-run --mount type=bind,source=/srv/www/fcalo-blog,target=/app/public-def docker-builder
+       #- docker rm docker-builder-run
      - docker rmi docker-builder
      - echo goodbye $(whoami)

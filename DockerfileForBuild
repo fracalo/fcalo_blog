@@ -11,6 +11,9 @@ RUN pnpm install
 
 COPY ./  ./
 
-RUN VITE_SITE=https://fcalo.com && pnpm build
+ENV VITE_SITE=https://fcalo.com
+
+#RUN VITE_SITE=https://fcalo.com && pnpm build
+RUN pnpm build
 
 ENTRYPOINT cp -r ./dist/* ./public-def
