@@ -11,9 +11,10 @@ RUN pnpm install
 
 COPY ./  ./
 
-ENV VITE_SITE=https://fcalo.com
 
-#RUN VITE_SITE=https://fcalo.com && pnpm build
+ENV VITE_SITE_DESC="Francesco Calo's blog, a fullstack web developer journey, from devops, automation to functional programming, linux, typescript, nodejs, k8s, bash."
+ENV VITE_PAGE_SIZE=5
+ENV VITE_SITE='https://fcalo.com'
 RUN pnpm build
 
 ENTRYPOINT cp -r ./dist/* ./public-def
