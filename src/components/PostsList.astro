@@ -1,56 +1,63 @@
 ---
-import PostListItem from '../components/PostListItem.astro';
-import type { Post } from '../utils/posts'
-import { 
-    pageSize,
-    orderPosts,
-    pagePosts,
-} from '../utils/posts'
-import Pagination from './Pagination.astro';
+import PostListItem from "../components/PostListItem.astro";
+import type { Post } from "../utils/posts";
+import { pageSize, orderPosts, pagePosts } from "../utils/posts";
+import Pagination from "./Pagination.astro";
 
 type Props = {
-    page?: number | undefined,
-    category?: string | undefined
-}
-const { page = 1, category } = Astro.props
+    page?: number | undefined;
+    category?: string | undefined;
+};
+const { page = 1, category } = Astro.props;
 
-let posts: Array<Post> = []
+let posts: Array<Post> = [];
 try {
-    posts = await Astro.glob<Post>('../pages/blog/**/*.{mdx,md}')
-}
-catch (e) {
-    console.log(e)
+    posts = await Astro.glob<Post>("../pages/blog/**/*.{mdx,md}");
+} catch (e) {
+    console.log(e);
 }
 if (!import.meta.env.DEV) {
-    posts = posts.filter(x => !x.frontmatter.draft)
+    posts = posts.filter((x) => !x.frontmatter.draft);
 }
 if (category) {
-    posts = posts.filter(x => x.frontmatter.category && x.frontmatter.category.some(
-        c => c.toLowerCase() === category
-    ))
+    posts = posts.filter(
+        (x) =>
+            x.frontmatter.category &&
+            x.frontmatter.category.some((c) => c.toLowerCase() === category)
+    );
 }
 
-const orderedPosts = orderPosts(posts)
-const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1)
-const totalPages = Math.ceil(posts.length/pageSize)
+const orderedPosts = orderPosts(posts);
+const pagedPosts = pagePosts(orderedPosts, pageSize, page || 1);
+const totalPages = Math.ceil(posts.length / pageSize);
 
-const nextBase = category ? `/category/${category}/${page+1}`: `/${page+1}`
-const nextLink = totalPages > page ? new URL(nextBase, Astro.url) : undefined
+const nextBase = category
+    ? `/category/${category}/${page + 1}`
+    : `/${page + 1}`;
+const nextLink = totalPages > page ? nextBase : undefined;
 
-const prevBase = category ? `/category/${category}/${page-1}`: `/${page-1}`
-const prevLink = page > 1 ? new URL(prevBase, Astro.url) : undefined
+const prevBase = category
+    ? `/category/${category}/${page - 1}`
+    : `/${page - 1}`;
+const prevLink = page > 1 ? prevBase : undefined;
 ---
 
-{pagedPosts.map((x: Post, i: number) => (
-    <PostListItem 
-        title={x.frontmatter.title} 
-        summary={x.frontmatter.summary} 
-        date={x.frontmatter.date}
-        category={x.frontmatter.category}
-        readingTime={x.readingTime?.text}
-        isLast={i === (pagedPosts.length - 1)}
-        url={new URL(x.url!, Astro.url)}
-    />
-))}
-<Pagination page={page} totalPages={totalPages} nextLink={nextLink} prevLink={prevLink} />
-
+{
+    pagedPosts.map((x: Post, i: number) => (
+        <PostListItem
+            title={x.frontmatter.title}
+            summary={x.frontmatter.summary}
+            date={x.frontmatter.date}
+            category={x.frontmatter.category}
+            readingTime={x.readingTime?.text}
+            isLast={i === pagedPosts.length - 1}
+            url={x.url!}
+        />
+    ))
+}
+<Pagination
+    page={page}
+    totalPages={totalPages}
+    nextLink={nextLink}
+    prevLink={prevLink}
+/>

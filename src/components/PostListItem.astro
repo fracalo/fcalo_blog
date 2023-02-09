@@ -5,7 +5,7 @@ type Props = {
     date: string;
     readingTime: string;
     isLast: boolean;
-    url: URL;
+    url: URL | string;
     category: Array<string>;
 };
 const {
@@ -36,7 +36,7 @@ if (date) {
             <a
                 rel="prefetch"
                 class="text-sm font-semibold pr-2 text-gray-700"
-                href={new URL(`/category/${x.toLowerCase()}`, Astro.url)}
+                href={`/category/${x.toLowerCase()}`}
             >
                 #{x}
             </a>

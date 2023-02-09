@@ -90,8 +90,8 @@ export default defineConfig({
         partytown(),
         mySwPlugin(),
     ],
-    server: {
-        host: true,
-        port: 3002,
-    },
+    //server: {
+    //    host: true,
+    //    port: 3002,
+    //},
 });
