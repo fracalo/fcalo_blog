@@ -1,51 +1,52 @@
 ---
-import OdLogo from './OdLogo.astro'
+import OdLogo from "./OdLogo.astro";
 const contacts = [
-    {name: 'Github', href: 'https://github.com/fracalo'},
-    {name: 'Twitter', href: 'https://twitter.com/Fracal0'},
-    {name: 'LinkedIn', href: 'https://www.linkedin.com/in/fcalo/'},
-    {name: 'SO', href: 'https://stackoverflow.com/users/2417031/maioman'}
-]
-const homeUrl = '/';
+    { name: "Github", href: "https://github.com/fracalo" },
+    { name: "Twitter", href: "https://twitter.com/Fracal0" },
+    { name: "LinkedIn", href: "https://www.linkedin.com/in/fcalo/" },
+    { name: "SO", href: "https://stackoverflow.com/users/2417031/maioman" },
+];
+const homeUrl = "/";
 ---
-<footer class="p-2 mb-4 sm:mb-0 mt-10 py-10 flex justify-center border-t border-gray-300">
+
+<footer
+    class="p-2 mb-4 sm:mb-0 mt-10 py-10 flex justify-center border-t border-gray-300"
+>
     <div class="wrap flex-col md:flex-row gap-2 md:gap-0">
-        <a class='md:mr-auto' href={homeUrl} >
+        <a class="md:mr-auto" href={homeUrl}>
             <p><strong>Francesco Calò</strong> is Outskirt Dev</p>
         </a>
-        <a href={homeUrl} >
-            <div class='logo-wrapper'>
-                <OdLogo/>
-            </div>
-        </a>
-        <div class='contact-wrap flex md:ml-auto'>
-        {
-            contacts.map(x => (
-                <a class='contacts' href={x.href}>
-                  {x.name}
-                </a>
-            ))
-        }
+        <div class="logo-wrapper">
+            <OdLogo />
+        </div>
+        <div class="contact-wrap flex md:ml-auto">
+            {
+                contacts.map((x) => (
+                    <a class="contacts" href={x.href}>
+                        {x.name}
+                    </a>
+                ))
+            }
         </div>
     </div>
 </footer>
 
-<style >
-.wrap{
-    width: 66vw;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    white-space: nowrap;
-}
+<style>
+    .wrap {
+        width: 66vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        white-space: nowrap;
+    }
 
-.contact-wrap .contacts:not(:last-of-type) {
-    margin-right: .5rem;
-    padding-right: .5rem;
-    border-right: 1px solid #ddd;
-}
+    .contact-wrap .contacts:not(:last-of-type) {
+        margin-right: 0.5rem;
+        padding-right: 0.5rem;
+        border-right: 1px solid #ddd;
+    }
 
-.logo-wrapper {
-    height: 2rem;
-}
+    .logo-wrapper {
+        height: 2rem;
+    }
 </style>

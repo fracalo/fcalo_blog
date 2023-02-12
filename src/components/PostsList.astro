@@ -17,8 +17,8 @@ try {
     console.log(e);
 }
 if (!import.meta.env.DEV) {
-    posts = posts.filter((x) => !x.frontmatter.draft && x.frontmatter.title);
     // we use the title filter to exclude strange filesystem imports
+    posts = posts.filter((x) => !x.frontmatter.draft && x.frontmatter.title);
 }
 if (category) {
     posts = posts.filter(
