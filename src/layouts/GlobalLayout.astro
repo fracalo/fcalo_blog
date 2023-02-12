@@ -22,7 +22,12 @@ const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
         <meta name="generator" content={`${Astro.generator} and me`} />
         <meta name="description" content={description || fallbackDesc} />
         <title>{title}</title>
-        {isRoot && <link rel="manifest" href="/manifest.json" />}
+        {isRoot && <>
+                <link rel="manifest" href="/manifest.json" />
+                <meta name="theme-color" content="#f43c3c" /> 
+                <link rel="apple-touch-icon" href="/images/icons-192-bg.png">
+            </>
+        }
     </head>
     <body>
         <Navbar />
