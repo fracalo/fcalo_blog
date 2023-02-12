@@ -1,6 +1,5 @@
 ---
 import GlobalLayout from './GlobalLayout.astro'
-import Footer from '../components/Footer.astro'
 
 export interface Props {
     isRoot: boolean | undefined;
@@ -13,10 +12,9 @@ const { title, description, isRoot } = Astro.props;
 
 
 <GlobalLayout title={title} description={description} isRoot={isRoot}>
-    <div class="p-2 justify-center flex">
+    <div class="p-2 justify-center flex flex-1">
         <div class="content-wrapper">
             <slot />
         </div>
     </div>
-    <Footer />
 </GlobalLayout>

@@ -1,6 +1,7 @@
 ---
 import "../css/styles.scss";
 import Navbar from "../components/Navbar.astro";
+import Footer from '../components/Footer.astro'
 
 type Props = {
     isRoot: boolean | undefined;
@@ -25,8 +26,9 @@ const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
     </head>
     <body>
         <Navbar />
-        <div class="main-wrapper">
+        <div class="main-wrapper flex flex-1 flex-col">
             <slot />
+            <Footer />
         </div>
     </body>
     <script defer={true}>
