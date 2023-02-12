@@ -21,7 +21,7 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "/",
+  "start_url": "https://fcalo.com/",
   "display": "standalone",
   "scope": "/",
   "theme_color": "#f43c3c",

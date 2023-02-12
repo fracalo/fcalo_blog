@@ -27,26 +27,28 @@ if (date) {
 
 <article>
     <a href={url}>
-        <h2 class="post-title">
+        <h2 class="post-title pb-2">
             {title}
         </h2>
     </a>
-    {
-        category.map((x) => (
-            <a
-                rel="prefetch"
-                class="text-sm font-semibold pr-2 text-gray-700"
-                href={`/category/${x.toLowerCase()}`}
-            >
-                #{x}
-            </a>
-        ))
-    }
+    <div class="flex gap-2 flex-wrap py-2">
+        {
+            category.map((x) => (
+                <a
+                    rel="prefetch"
+                    class="text-sm font-semibold text-gray-700 whitespace-nowrap"
+                    href={`/category/${x.toLowerCase()}`}
+                >
+                    <p class="pr-2 py-1">#{x}</p>
+                </a>
+            ))
+        }
+    </div>
     <div class="flex text-md text-gray-500 mb-2">
         <p class="pr-2">{formattedDate}</p>
         <p class="pr-2">~</p>
         <p>{readingTime}</p>
     </div>
     <div class="text">{summary}</div>
-    {!isLast && <hr class="border-transparent mt-6 mb-4" />}
+    {!isLast && <hr class="border-transparent mt-6 mb-6" />}
 </article>
