@@ -17,7 +17,8 @@ try {
     console.log(e);
 }
 if (!import.meta.env.DEV) {
-    posts = posts.filter((x) => !x.frontmatter.draft);
+    posts = posts.filter((x) => !x.frontmatter.draft && x.frontmatter.title);
+    // we use the title filter to exclude strange filesystem imports
 }
 if (category) {
     posts = posts.filter(
@@ -42,6 +43,10 @@ const prevBase = category
 const prevLink = page > 1 ? prevBase : undefined;
 ---
 
+{
+    //we add some padding-top to pages that don't have any heading title (that are paged)
+    Astro.props.page !== undefined && <div class="pt-8" />
+}
 {
     pagedPosts.map((x: Post, i: number) => (
         <PostListItem
