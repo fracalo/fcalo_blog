@@ -25,7 +25,7 @@
   "display": "standalone",
   "scope": "/",
   "theme_color": "#f43c3c",
-  "background_color": "#f43c3c",
+  "background_color": "#f9fbfd",
   "shortcuts": [],
   "description": "Francesco Calo's blog, a fullstack web developer journey, from devops, automation to functional programming, linux, typescript, nodejs, k8s, bash.",
   "screenshots": []
