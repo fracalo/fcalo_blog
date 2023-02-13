@@ -2,23 +2,24 @@
 title: Building a high performance website
 summary: How to achieve the mythological lighthouse score of 100.
 category: [web, browser, javascript]
-date: '2023-01-23T08:40:32.169Z'
+date: '2023-02-13T08:40:32.169Z'
 layout: ../../../layouts/LayoutMdx.astro
-draft: true
+draft: false
 ---
 
 import lighthouse100 from './lighthouse100.png'
+import perfectScore from './perfect-score.png'
 import { Picture } from '@astrojs/image/components'
 
 I've had this blog for quite a while, although I'm not a professional content creator I do my best at documenting my work,  
 It helps me organize my thoughts and hopefully it might help others passing by.
 
-But the intrinsic motivitation for writing content is another one, I build web products,  
+But the intrinsic motivitation for writing content is that I build web products,  
 and this blog is just me prototyping with whatever web-related unicorn I want to play with.
 
-And today I want to see how I can improve my blog's lighthouse score,  
-if you don't have web-dev experience and not know lighthouse you're probably not ready to go down the rabbit hole yet, 
-some literature you should go through are:
+Today I want to see how I can improve my blog's lighthouse score,  
+if you don't have web-dev experience nor know lighthouse you're probably not ready to go down the rabbit hole yet, 
+in this case I suggest to start from here:
   - [Lighthouse documentation](https://developer.chrome.com/docs/lighthouse/overview/)
   - [Progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement)
   - [Mdn web docs](https://developer.mozilla.org/en-US/docs/Learn)
@@ -31,13 +32,14 @@ Web development (like most other fields) is made of trends,
 in this sector many JS frameworks are born and die in the lifespan of a butterfly.  
 Last years have been dominated by React, and the SPA bandwagon, these are awesome if you need to build applications,  
 nethertheless they bring in many issues in the context of optimization:
-    - The amount of javascript source files you need to download is relatively high.
+    - The amount of javascript source files you need to download is ludicrous.
     - Browser side routing are frowned upon by crawlers.
-    - [Virtual dom](https://reactjs.org/docs/faq-internals.html) frameworks  abstract away from the real dom through js, this translates to extra resources being spent by the browser and ultimately the device.
+    - [Virtual dom](https://reactjs.org/docs/faq-internals.html) frameworks abstract away from the real dom through js, this translates to extra resources being spent by the browser and ultimately the device.
 
-We certainly don't need [SPA](https://en.wikipedia.org/wiki/Single-page_application) capabilities to display the blog,  
-but building a custom process that generates html would mean reinventing the wheel in terms of DX and scaffolding,  
-eventually I ended up choosing [Astrojs](https://astro.build/),
+We certainly don't need [SPA](https://en.wikipedia.org/wiki/Single-page_application) capabilities to display a blog,  
+but building a custom process that generates html would mean reinventing the wheel in terms of DX and scaffolding...  
+
+So I ended up choosing [Astrojs](https://astro.build/),
 which transforms a component architecture into a static resource website with a state of the art compilation stage.  
 being specifically built for displaying static content, it fits my requirements, and has a lot of excellent docs that go with it.
 
@@ -46,11 +48,12 @@ being specifically built for displaying static content, it fits my requirements,
 
 <Picture src={lighthouse100} alt='perfect score 100 on lighthouse' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
-Actually I cheated a little bit generating this picture, first this is a local preview of the build, second I didn't import the fonts. but apart from that there's everything else (BTW, adding back the fonts back in I hit 99, more on this later).  
+Actually I cheated a little with this screenshot, on first try I was still missing a lot of stuff (fonts, images, etc.),  
+but anyway, later, I managed to include everything and still hit 100.
 
+## Astrojs
 The workflow that astro sets up for developing is great, each part of the app is divided in components, the dev environment is powered by vite (blazingly fast), while the production build is a crafty custom process.  
-routes are handlend on a resource base, during development you can define them similarly to nextjs using `getStaticPath`  
-and then transformed during the build.  
+Routes are handlend on a resource base, during development you can define them similarly to nextjs using `getStaticPath` and then transformed during the build.  
 There is also a SSR variant, but I didn't use it.
 
 In my case I used many addons to improve performance and DX:
@@ -59,7 +62,7 @@ In my case I used many addons to improve performance and DX:
     - Content is written in MDX (pimped with rehype and remark).
     - Images are dealt with the astrojs [Picture](https://docs.astro.build/en/guides/images/#picture--) component.
     - Prefetch has it's addon.
-    - Partytown to offload main thread.
+    - Partytown for offload the main thread.
     - Critter to inline only the required css.
     - Sitemap generated automatically by it's addon.
     - PWA is handled custom with workbox.
@@ -68,26 +71,26 @@ Using addons is plug and play, everything fell into place quite easily, and cust
 
 
 ## Tuning
-Here some of the tuning I went through to achieve high performance.
+Following you'll find some tuning I went through to achieve high performance.
 
 
 ### Moving parts
 
-I stripped extra scripts to the bone, but managed to build a custom menu:  
-there's a component dealing with the opening/closing of the drawer, and the main-content component reacts with some width adjustment.  
-Both components hook up to a [nanostore](https://github.com/nanostores/nanostores) in order to keep that nice separation keen to every component architect.
+I stripped extra scripts to the bone but here's how I managed to build a custom menu.  
+The menuIcon component is dealing with the opening/closing of the drawer, and the main-content component reacts with some width adjustment.  
+Both components hook up to a [nanostore](https://github.com/nanostores/nanostores) in order to keep that nice separation keen to every component architect.  
 One thing to watch out for is moving nodes around during first render, this slows LCP ([Largest Contentful Paint](https://web.dev/optimize-lcp/#:~:text=Largest%20Contentful%20Paint%20(LCP)%20is,is%20rendered%20within%20the%20viewport))
-which is one of the main metric lighthouse uses to define the score.
-In this regards I just check a flag set in sessionStorage to understand, and align, the state of the menu ('open' | 'close').
-Furthermore, all the custom scripts load with defer attribute set to avoid blocking the page parsing.
+which is one of the main metric lighthouse uses to define the score.  
+In this regards I just check a flag set in sessionStorage to align the state of the drawer ('open' | 'close').
+Furthermore, all the custom script logic loads with defer attribute set to avoid blocking the page parsing.
 
-### No blocking fonts
+### Non blocking fonts
 Custom fonts on a site is something you'll probably need,
-but loading the fonts synchronously dramatically increased the size of my page.
-Import through [fontsource](https://fontsource.org) get added directly as a stylesheet and,
-together with critters, this translates to copying the font source directly in you main html.
+but loading the fonts synchronously dramatically increased the size of my page.  
+Import through [fontsource](https://fontsource.org) get added directly as a stylesheet and
+together with [critters](https://github.com/GoogleChromeLabs/critters), this translates to copying the font source directly in you main html.
 
-in Astro this can be avoided simply importing the font inside an [`async`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-async) script element,
+In Astro this can be avoided simply importing the font inside an [`async`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-async) script element,
 this will parallelize the execution of the script which add the style node for the fonts:
 ```html
     <script async={true}>
@@ -107,41 +110,32 @@ This tweak reduces the page size by 92K with no UI visible difference.
 ```
 ### Critters
 this tool statically analyzes the page source and only imports the required css inlining it the html page,
-It reduces the total amount of CSS and drops extra network transactions.
+It reduces the total amount of CSS and drops extra network transactions.  
 [The integration with astro is seamless.](https://github.com/astro-community/astro-critters#readme)
 
 ### Partytown
-it facilitates the loading of all non critical scripts through the use of a service-worker it controls.
+it facilitates the loading of all non critical scripts through the use of a service-worker it controls.  
 I use it mainly for Analytics.
 
 ### Prefetch
-Wouldn't it be nice if we could preload the page resources we need in order to have them already ready when the user navigates to them?
+Wouldn't it be nice if we could preload the page resources we need in order to have them ready when the user navigates to them?  
 Such a [functionality](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload) exists in the browser, unfortunately it's not supported by the [anchor element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a).  
-But this is easily replicable with a script, and astrojs has got you covered with the [prefetch addon](https://github.com/withastro/astro/tree/main/packages/integrations/prefetch),  
-you just need to add a `[rel]='prefetch'` attribute to the a tag that nees prefetching.  
-under the hood the addon will search for all elements with this attribute and, if the connection is not 2g/3g, it will make a request it.  
+But this is easily replicable with a script, and astrojs has got you covered with the [prefetch addon](https://github.com/withastro/astro/tree/main/packages/integrations/prefetch), you just need to add a `[rel]='prefetch'` attribute to the a tag that nees prefetching.  
+Under the hood the addon will search for all elements with this attribute and, if the connection is not 2g/3g, it will make a request that will cache the page.  
  
+### PWA and service worker
+The PWA manifest is dropped directly into the `public` dir and imported in the root page. 
+
+To deal with service worker I used the workbox-cli with `generateSW flow`.  
+Then, through the Astro plugin integration api, the import logic is written in my homepage index.  
+If you want to know more about that you can read the [dedicated thread about it (coming soon)](https://fcalo.com/).
 
 
+## Wrapping up
+<Picture src={perfectScore} alt='resulting scores' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
+The experience of optimizing this blog was fun, going to the basics I got to tweak a lot of low level aspects.  
 
-
---------
-
-
-slow down ? :  ?
-- relative line-height 
-- don't shift element layout too much on page load
-
-
-
-
-
-
-
-
-
-
-
-
+Using Astro I was able to build something I really like (especially from an architectural point of view),   
+and it's wasn't even that hard, you just have to get the fundamentals write :).
 
 
