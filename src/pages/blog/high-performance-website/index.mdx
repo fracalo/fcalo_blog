@@ -5,6 +5,8 @@ category: [web, browser, javascript]
 date: '2023-02-13T08:40:32.169Z'
 layout: ../../../layouts/LayoutMdx.astro
 draft: false
+social_image: /src/pages/blog/high-performance-website/perfect-score.png
+
 ---
 
 import lighthouse100 from './lighthouse100.png'
@@ -29,7 +31,7 @@ in this case I suggest to start from here:
 ## Custom vs fandom
 
 Web development (like most other fields) is made of trends,  
-in this sector many JS frameworks are born and die in the lifespan of a butterfly.  
+in this sector many JS frameworks are born and die in the lifespan of a butterfly, but some eventually stick around.  
 Last years have been dominated by React, and the SPA bandwagon, these are awesome if you need to build applications,  
 nethertheless they bring in many issues in the context of optimization:
     - The amount of javascript source files you need to download is ludicrous.
@@ -56,7 +58,7 @@ The workflow that astro sets up for developing is great, each part of the app is
 Routes are handlend on a resource base, during development you can define them similarly to nextjs using `getStaticPath` and then transformed during the build.  
 There is also a SSR variant, but I didn't use it.
 
-In my case I used many addons to improve performance and DX:
+I included many addons to improve performance and DX:
     - Styles are handled in SASS.
     - Using tailwind through addon.
     - Content is written in MDX (pimped with rehype and remark).
@@ -67,7 +69,7 @@ In my case I used many addons to improve performance and DX:
     - Sitemap generated automatically by it's addon.
     - PWA is handled custom with workbox.
 
-Using addons is plug and play, everything fell into place quite easily, and custom additions are really easy to implement.
+Using addons is plug and play, everything fell into place quite easily, moreover custom additions are really easy to implement.
 
 
 ## Tuning
@@ -80,7 +82,7 @@ I stripped extra scripts to the bone but here's how I managed to build a custom 
 The menuIcon component is dealing with the opening/closing of the drawer, and the main-content component reacts with some width adjustment.  
 Both components hook up to a [nanostore](https://github.com/nanostores/nanostores) in order to keep that nice separation keen to every component architect.  
 One thing to watch out for is moving nodes around during first render, this slows LCP ([Largest Contentful Paint](https://web.dev/optimize-lcp/#:~:text=Largest%20Contentful%20Paint%20(LCP)%20is,is%20rendered%20within%20the%20viewport))
-which is one of the main metric lighthouse uses to define the score.  
+which is an essential metric lighthouse uses to define the score.  
 In this regards I just check a flag set in sessionStorage to align the state of the drawer ('open' | 'close').
 Furthermore, all the custom script logic loads with defer attribute set to avoid blocking the page parsing.
 
@@ -109,7 +111,7 @@ This tweak reduces the page size by 92K with no UI visible difference.
 144K   sync.html
 ```
 ### Critters
-this tool statically analyzes the page source and only imports the required css inlining it the html page,
+This tool statically analyzes the page source and only imports the required css inlining it the html page,
 It reduces the total amount of CSS and drops extra network transactions.  
 [The integration with astro is seamless.](https://github.com/astro-community/astro-critters#readme)
 
@@ -135,7 +137,11 @@ If you want to know more about that you can read the [dedicated thread about it 
 <Picture src={perfectScore} alt='resulting scores' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 The experience of optimizing this blog was fun, going to the basics I got to tweak a lot of low level aspects.  
 
-Using Astro I was able to build something I really like (especially from an architectural point of view),   
+Using Astro I was able to build something I'm really satisfied with (especially from an architectural point of view),   
 and it's wasn't even that hard, you just have to get the fundamentals write :).
+
+Does my site now qualify as blazingly fast?  
+In some regards yes, but there is still some work I want to do with CDNs,  
+stay tuned if you're interested, and thanks for passing by!
 
 

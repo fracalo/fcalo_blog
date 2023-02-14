@@ -1,27 +1,54 @@
 ---
-import type { Post as Props } from '../utils/posts'
-import { getFormattedDate } from '../utils/posts'
-import GlobalLayout from './GlobalLayout.astro'
+import fs from "fs/promises";
+import { join } from "path";
+import type { Post as Props } from "../utils/posts";
+import { getFormattedDate } from "../utils/posts";
+import GlobalLayout from "./GlobalLayout.astro";
 
-export type { Props }
+export type { Props };
 
 const { frontmatter, readingTime } = Astro.props;
-const { title, date, summary } = frontmatter
-const formattedDate = getFormattedDate(date)
+const { title, date, summary, social_image } = frontmatter;
+const formattedDate = getFormattedDate(date);
+
+const metas: Record<string, string> = {
+    "twitter:card": "summary_large_image",
+    "twitter:site": "@Fracal0",
+    "twitter:title": title,
+    "twitter:description": summary,
+    "og:title": title,
+    "og:type": 'article',
+    "og:url": Astro.url.href
+};
+
+if (social_image) {
+    const dirname = import.meta.url
+        .replace(/[^/]+$/, "")
+        .replace("file://", "");
+    const projRoot = join(dirname, "../../");
+    const socialImagePathTree = social_image.split("/");
+    const socialImageName = socialImagePathTree[socialImagePathTree.length - 1];
+    fs.copyFile(
+        join(projRoot, social_image),
+        join(projRoot, "/public/images/", socialImageName)
+    );
+    metas["twitter:image"] = `/images/${socialImageName}`;
+    metas["og:image"] = `/images/${socialImageName}`;
+}
 ---
 
-<GlobalLayout title={title} description={summary}>
+<GlobalLayout title={title} description={summary} metas={metas}>
     <article class="blog-article pt-6 justify-center flex flex-1">
         <div class="content-wrapper p-2">
-            <h1 class='post-title'>
-                { title }
+            <h1 class="post-title">
+                {title}
             </h1>
-            <div class='flex text-md text-gray-500 my-2'>
-                <p class='pr-2'>{formattedDate}</p>
-                {readingTime && <p class='pr-2'>~</p>}
+            <div class="flex text-md text-gray-500 my-2">
+                <p class="pr-2">{formattedDate}</p>
+                {readingTime && <p class="pr-2">~</p>}
                 <p>{readingTime?.text}</p>
             </div>
-            <div class='pt-8'>
+            <div class="pt-8">
                 <slot />
             </div>
         </div>
