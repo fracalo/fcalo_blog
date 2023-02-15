@@ -10,9 +10,11 @@ export type { Props };
 const { frontmatter, readingTime } = Astro.props;
 const { title, date, summary, social_image } = frontmatter;
 const formattedDate = getFormattedDate(date);
+const { VITE_SITE } = import.meta.env;
 
 const metas: Record<string, string> = {
     "twitter:card": "summary_large_image",
+    "twitter:creator": "@Fracal0",
     "twitter:site": "@Fracal0",
     "twitter:title": title,
     "twitter:description": summary,
@@ -32,8 +34,8 @@ if (social_image) {
         join(projRoot, social_image),
         join(projRoot, "/public/images/", socialImageName)
     );
-    metas["twitter:image"] = `/images/${socialImageName}`;
-    metas["og:image"] = `/images/${socialImageName}`;
+    metas["twitter:image"] = `${VITE_SITE}/images/${socialImageName}`;
+    metas["og:image"] = `${VITE_SITE}/images/${socialImageName}`;
 }
 ---
 
