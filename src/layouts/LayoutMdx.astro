@@ -12,14 +12,17 @@ const { title, date, summary, social_image } = frontmatter;
 const formattedDate = getFormattedDate(date);
 const { VITE_SITE } = import.meta.env;
 
-const metas: Record<string, string> = {
+const nameMetas: Record<string, string> = {
     "twitter:card": "summary_large_image",
     "twitter:creator": "@Fracal0",
     "twitter:site": "@Fracal0",
     "twitter:title": title,
     "twitter:description": summary,
+};
+const propMetas: Record<string, string> = {
     "og:title": title,
     "og:type": 'article',
+    "og:description": summary,
     "og:url": Astro.url.href
 };
 
@@ -29,17 +32,17 @@ if (social_image) {
         .replace("file://", "");
     const projRoot = join(dirname, "../../");
     const socialImagePathTree = social_image.split("/");
-    const socialImageName = socialImagePathTree[socialImagePathTree.length - 1];
+    const socialImageName = socialImagePathTree[socialImagePathTree.length - 1] as string;
     fs.copyFile(
         join(projRoot, social_image),
         join(projRoot, "/public/images/", socialImageName)
     );
-    metas["twitter:image"] = `${VITE_SITE}/images/${socialImageName}`;
-    metas["og:image"] = `${VITE_SITE}/images/${socialImageName}`;
+    nameMetas["twitter:image"] = `${VITE_SITE}/images/${socialImageName}`;
+    propMetas["og:image"] = `${VITE_SITE}/images/${socialImageName}`;
 }
 ---
 
-<GlobalLayout title={title} description={summary} metas={metas}>
+<GlobalLayout title={title} description={summary} propMetas={propMetas} nameMetas={nameMetas}>
     <article class="blog-article pt-6 justify-center flex flex-1">
         <div class="content-wrapper p-2">
             <h1 class="post-title">

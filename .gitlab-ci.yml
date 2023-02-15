@@ -25,7 +25,8 @@ deploy_ec2:
    - main
  script:
      - cd /home/ec2-user/Repos/fcalo-blog-astro
-     - git pull
+     - git fetch origin
+     - git reset --hard origin/main
      - docker build -t docker-builder -f DockerfileForBuild .
      - docker run --rm --name docker-builder-run --mount type=bind,source=/srv/www/fcalo-blog,target=/app/public-def docker-builder
        #- docker rm docker-builder-run

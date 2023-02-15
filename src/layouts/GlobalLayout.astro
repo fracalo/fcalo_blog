@@ -7,10 +7,11 @@ type Props = {
     isRoot: boolean | undefined;
     title: string;
     description?: string | undefined;
-    metas?: Record<string,string> | undefined
+    nameMetas?: Record<string,string> | undefined
+    propMetas?: Record<string,string> | undefined
 };
 
-const { title, description, isRoot, metas = [] } = Astro.props;
+const { title, description, isRoot, propMetas = {}, nameMetas = {} } = Astro.props;
 const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
 
 ---
@@ -30,7 +31,10 @@ const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
                 <link rel="apple-touch-icon" href="/images/icons-192-bg.png">
             </>
         }
-        {Object.entries(metas).map(([name, content]) => 
+        {Object.entries(propMetas).map(([prop, content]) => 
+                <meta property={prop} content={content} /> 
+        )}
+        {Object.entries(nameMetas).map(([name, content]) => 
                 <meta name={name} content={content} /> 
         )}
     </head>
