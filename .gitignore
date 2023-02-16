@@ -3,6 +3,8 @@ dist/
 .output/
 .vscode/
 
+# used to generate the social images, just copies of other stuff
+public/images/social/
 # dependencies
 node_modules/
 

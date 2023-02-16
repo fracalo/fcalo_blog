@@ -1,17 +1,43 @@
 ---
-import GlobalLayout from './GlobalLayout.astro'
+import GlobalLayout from "./GlobalLayout.astro";
+const { VITE_SITE, VITE_SITE_DESC: fallbackDesc } = import.meta.env;
 
 export interface Props {
     isRoot: boolean | undefined;
-	title: string;
+    title: string;
     description: string | undefined;
 }
 
 const { title, description, isRoot } = Astro.props;
+
+const desc = description || fallbackDesc;
+
+const socialImageName = "social-2_1.png";
+const socialUri = `${VITE_SITE}/images/${socialImageName}`;
+const nameMetas: Record<string, string> = {
+    "twitter:card": "summary_large_image",
+    "twitter:creator": "@Fracal0",
+    "twitter:site": "@Fracal0",
+    "twitter:title": title,
+    "twitter:description": desc,
+    "twitter:image:src": socialUri,
+};
+const propMetas: Record<string, string> = {
+    "og:title": title,
+    "og:type": "article",
+    "og:description": desc,
+    "og:url": Astro.url.href,
+    "og:image": socialUri,
+};
 ---
 
-
-<GlobalLayout title={title} description={description} isRoot={isRoot}>
+<GlobalLayout
+    title={title}
+    description={description}
+    isRoot={isRoot}
+    nameMetas={nameMetas}
+    propMetas={propMetas}
+>
     <div class="p-2 justify-center flex flex-1">
         <div class="content-wrapper">
             <slot />

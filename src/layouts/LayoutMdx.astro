@@ -21,9 +21,9 @@ const nameMetas: Record<string, string> = {
 };
 const propMetas: Record<string, string> = {
     "og:title": title,
-    "og:type": 'article',
+    "og:type": "article",
     "og:description": summary,
-    "og:url": Astro.url.href
+    "og:url": Astro.url.href,
 };
 
 if (social_image) {
@@ -32,17 +32,25 @@ if (social_image) {
         .replace("file://", "");
     const projRoot = join(dirname, "../../");
     const socialImagePathTree = social_image.split("/");
-    const socialImageName = socialImagePathTree[socialImagePathTree.length - 1] as string;
+    const socialImageName = socialImagePathTree[
+        socialImagePathTree.length - 1
+    ] as string;
     fs.copyFile(
         join(projRoot, social_image),
-        join(projRoot, "/public/images/", socialImageName)
+        join(projRoot, "/public/images/social/", socialImageName)
     );
-    nameMetas["twitter:image"] = `${VITE_SITE}/images/${socialImageName}`;
-    propMetas["og:image"] = `${VITE_SITE}/images/${socialImageName}`;
+    const socialUri = `${VITE_SITE}/images/social/${socialImageName}`;
+    nameMetas["twitter:image:src"] = socialUri;
+    propMetas["og:image"] = socialUri;
 }
 ---
 
-<GlobalLayout title={title} description={summary} propMetas={propMetas} nameMetas={nameMetas}>
+<GlobalLayout
+    title={title}
+    description={summary}
+    propMetas={propMetas}
+    nameMetas={nameMetas}
+>
     <article class="blog-article pt-6 justify-center flex flex-1">
         <div class="content-wrapper p-2">
             <h1 class="post-title">
