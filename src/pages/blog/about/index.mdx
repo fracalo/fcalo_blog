@@ -3,14 +3,14 @@ title: About this blog
 date: '2018-12-22T22:40:32.169Z'
 layout: ../../../layouts/LayoutMdx.astro
 ---
-import { Picture } from '@astrojs/image/components'
+import { Image } from 'astro:assets'
 import urbanDev from './urban-development.png'
 
 A brief explanation on the blog-title.  
 As you may notice the posts have nothing to do with construction engineering,
 building neighborhoods and related.
 
-<Picture src={urbanDev} widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} alt='urban development mexico city' />
+<Image src={urbanDev} widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} alt='urban development mexico city' />
 
 In fact I'm a programmer,
 the name __outskirt development__ came as the first association of the term __development__ to something that wasn't related to computers.

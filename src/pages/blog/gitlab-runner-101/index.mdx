@@ -5,7 +5,7 @@ summary: How to build a deployment pipeline.
 category: [linux, CI, dev-ops]
 layout: ../../../layouts/LayoutMdx.astro
 ---
-import { Picture } from '@astrojs/image/components'
+import { Image } from 'astro:assets'
 import gitlabRunnerRegister from './gitlab-runner-img.png'
 
 
@@ -33,7 +33,7 @@ This setup relies on a linux server (here we use Ubuntu 18.04 ami) and a Gitlab.
 when asked take the parameters for `coordinator` and `token` from the gitlab server, you can use the default for every other parameter, but use `shell` as the executor.  
 We will do this in user mode because we've given a user access to the repo with ssh key created in step 2.
 
-<Picture src={gitlabRunnerRegister} alt='request animation from' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
+<Image src={gitlabRunnerRegister} alt='request animation from' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 7. For the runner to react to any change we'll need the process to be up, the easiest way to do this is  with `tmux`;  
   so open a tmux shell, `gitlab-runner run` and woilà!!  

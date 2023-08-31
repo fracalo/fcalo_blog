@@ -8,7 +8,6 @@ import tailwind from "@astrojs/tailwind";
 import { visit } from "unist-util-visit";
 
 /** @type {import('unified').Plugin<[], import('hast').Root>} */
-import image from "@astrojs/image";
 import sitemap from "@astrojs/sitemap";
 import prefetch from "@astrojs/prefetch";
 import critters from "astro-critters";
@@ -76,5 +75,5 @@ export default defineConfig({
     draft: true,
     remarkPlugins: [rehypeAccessibleEmojis, readingTime, readingMdxTime],
     rehypePlugins: [shiftHeadingDown]
-  }), tailwind(), image(), sitemap(), prefetch(), critters(), partytown(), mySwPlugin()]
+  }), tailwind(), sitemap(), prefetch(), critters(), partytown(), mySwPlugin()]
 });

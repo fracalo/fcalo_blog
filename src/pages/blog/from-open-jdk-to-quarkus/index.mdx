@@ -10,7 +10,7 @@ summary: |
 import erdUml from './erd-uml.png'
 import intellij_newProj from './intellij_newProj.png'
 import autocannonOut from './autocannon-out.png'
-import { Picture } from '@astrojs/image/components'
+import { Image } from 'astro:assets'
 
 
 ### Why I am writing this...
@@ -44,7 +44,7 @@ So to demo how Qaurkus works I'll develop something...
 What we'll build is a REST micro-service that will provide translation functionalities to consuming services.  
 The service can host multiple dictionaries, a given translation is placed in a dictionary, a dictionary may contain many translations.  
 
-<Picture  src={erdUml} alt='request animation from' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
+<Image  src={erdUml} alt='request animation from' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 We'll touch the following topics along the way:  
 
@@ -61,7 +61,7 @@ For convenience I'll use Intellij, but there is also a cli and [tools for  other
 
 In the Intellij panel we start up a project with Qaurkus and Java11 as runtime, as for the dependency I've included only "Reactive Routes" and "RESTEasy Jackson" to start:
 
-<Picture  src={intellij_newProj} alt='Intellij scaffolding' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
+<Image  src={intellij_newProj} alt='Intellij scaffolding' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 Our pom's dependencies now includes  `quarkus-resteasy, quarkus-resteasy-jackson, quarkus-reactive-routes, quarkus-arc, quarkus-junit5, rest-assured`,
 
@@ -204,7 +204,7 @@ Also note that, due to the way Graalvm works, I've added the _@RegisterForReflec
 If we analyze the container size we can see that it has a size of 162MB (docker ps  --size),   
 most interesting launching autocannon test after having loaded some translation this is the output:
 
-<Picture src={autocannonOut} alt='Autocannon output' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
+<Image src={autocannonOut} alt='Autocannon output' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 Connected to database we are able to serve 16k requests in 5 seconds, I don't really have experience in this kind of test but is seems quite snappy.  
 The max memory consumed during the test is around 450MB, and, although I haven't tried this exact app on the open-jdk, in my experience, similar services would have consumed a lot more.

@@ -6,7 +6,7 @@ summary: Stop thinking about code, and start looking for a story.
 layout: ../../../layouts/LayoutMdx.astro
 ---
 
-import { Picture } from '@astrojs/image/components'
+import { Image } from 'astro:assets'   
 import ideShot from './ide-shot.png'
 
 
@@ -31,7 +31,7 @@ At times, trying to follow the logic of a program with no logic, can be desolati
 But lately, I've found a technique to make it easier,   
 I open the git-blame annotation on my editor.
 
-<Picture src={ideShot} alt='screen shot from ide' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
+<Image src={ideShot} alt='screen shot from ide' widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
 
 ## The big picture
 Through the details of the single commits you can gain a lot of info of the evolution of the repo/feature.  
