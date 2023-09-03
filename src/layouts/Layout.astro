@@ -5,7 +5,7 @@ const { VITE_SITE, VITE_SITE_DESC: fallbackDesc } = import.meta.env;
 export interface Props {
     isRoot: boolean | undefined;
     title: string;
-    description: string | undefined;
+    description?: string;
 }
 
 const { title, description, isRoot } = Astro.props;

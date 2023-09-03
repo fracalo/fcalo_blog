@@ -7,7 +7,7 @@
     "dev": "astro dev --host 0.0.0.0 port 3001",
     "start": "astro dev",
     "build": "astro build && workbox generateSW workbox-config.cjs",
-    "preview": "astro preview",
+    "preview": "astro preview --port 3000",
     "astro": "astro"
   },
   "dependencies": {
@@ -33,6 +33,7 @@
     "postcss": "^8.4.21",
     "postcss-nesting": "^11.2.2",
     "sass": "^1.57.1",
+    "sharp": "^0.32.5",
     "typescript": "^4.9.4",
     "workbox-cli": "^6.5.4",
     "workbox-window": "^6.5.4"

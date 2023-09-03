@@ -1,82 +1,114 @@
 ---
 import "../css/styles.scss";
 import Navbar from "../components/Navbar.astro";
-import Footer from '../components/Footer.astro'
+import Footer from "../components/Footer.astro";
+import { ViewTransitions } from "astro:transitions";
 
 type Props = {
-    isRoot: boolean | undefined;
-    title: string;
-    description?: string | undefined;
-    nameMetas?: Record<string,string> | undefined
-    propMetas?: Record<string,string> | undefined
+  isRoot: boolean | undefined;
+  title: string;
+  description?: string | undefined;
+  nameMetas?: Record<string, string> | undefined;
+  propMetas?: Record<string, string> | undefined;
 };
 
-const { title, description, isRoot, propMetas = {}, nameMetas = {} } = Astro.props;
+const {
+  title,
+  description,
+  isRoot,
+  propMetas = {},
+  nameMetas = {},
+} = Astro.props;
 const { VITE_SITE_DESC: fallbackDesc } = import.meta.env;
-
 ---
 
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/png" href="/favicon.png" />
-        <meta name="generator" content={`${Astro.generator} and me`} />
-        <meta name="description" content={description || fallbackDesc} />
-        <title>{title}</title>
-        {isRoot && <>
-                <link rel="manifest" href="/manifest.json" />
-                <meta name="theme-color" content="#f43c3c" /> 
-                <link rel="apple-touch-icon" href="/images/icons-192-bg.png">
-            </>
-        }
-        {Object.entries(propMetas).map(([prop, content]) => 
-                <meta property={prop} content={content} /> 
-        )}
-        {Object.entries(nameMetas).map(([name, content]) => 
-                <meta name={name} content={content} /> 
-        )}
-    </head>
-    <body>
-        <Navbar />
-        <div class="main-wrapper flex flex-1 flex-col">
-            <slot />
-            <Footer />
-        </div>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="generator" content={`${Astro.generator} and me`} />
+    <meta name="description" content={description || fallbackDesc} />
+    <title>{title}</title>
+    <ViewTransitions />
+    {
+      isRoot && (
+        <>
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="theme-color" content="#f43c3c" />
+          <link rel="apple-touch-icon" href="/images/icons-192-bg.png" />
+        </>
+      )
+    }
+    {
+      Object.entries(propMetas).map(([prop, content]) =>
+        typeof content === "string" ? (
+          <meta property={prop} content={content} />
+        ) : null
+      )
+    }
+    {
+      Object.entries(nameMetas).map(([name, content]) =>
+        typeof content === "string" ? (
+          <meta name={name} content={content} />
+        ) : null
+      )
+    }
+  </head>
+  <body>
+    <Navbar />
+    <div class="main-wrapper flex flex-1 flex-col">
+      <slot />
+      <Footer />
+    </div>
     <script defer={true}>
-        import { menuStore, MenuStoreStates } from "../store/menuStore.ts";
+        import { menuStore } from "../store/menuStore.ts";
+        import type { MenuStoreStates } from "../store/menuStore.ts";
 
-        const mainWrapper = document.querySelector(
-            ".main-wrapper"
-        ) as HTMLElement;
-        const menu = document.querySelector(".menu") as HTMLElement;
-        const menuWidth = menu.getBoundingClientRect().width;
-        menuStore.subscribe((v: MenuStoreStates) => {
-            mainWrapper.style.paddingRight =
-                v === "open" ? `${menuWidth}px` : "initial";
-        });
+        document.addEventListener('astro:page-load', reactToNavStateCb(true), { once: true });
+        document.addEventListener('astro:after-swap', reactToNavStateCb(false));
 
-        setTimeout(() => {
-            mainWrapper.style.transition = ".2s all";
-        }, 100);
+
+        function reactToNavStateCb(immediateAnimation) {
+            return function () {
+                const mainWrapper = document.querySelector(
+                  ".main-wrapper"
+                ) as HTMLElement;
+                const menu = document.querySelector(".menu") as HTMLElement;
+                const menuWidth = menu.getBoundingClientRect().width;
+                menuStore.subscribe((v: MenuStoreStates) => {
+                  mainWrapper.style.paddingRight =
+                    v === "open" ? `${menuWidth}px` : "initial";
+                });
+                if (immediateAnimation) {
+                    mainWrapper.style.transition = ".2s all";
+                }
+                else {
+                    setTimeout(() => {
+                        mainWrapper.style.transition = ".2s all";
+                    }, 100);
+                }
+            }
+        }
+
     </script>
+
     <script async={true}>
-        import "@fontsource/kiwi-maru";
+      import "@fontsource/kiwi-maru";
     </script>
     <script
-        type="text/partytown"
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-Y1197D77VN"
-    ></script>
+      type="text/partytown"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-Y1197D77VN"></script>
     <script type="text/partytown">
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag("js", new Date());
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-        gtag("config", "G-Y1197D77VN");
+      gtag("config", "G-Y1197D77VN");
     </script>
+  </body>
 </html>

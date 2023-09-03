@@ -1,193 +1,207 @@
 ---
 import { Post, postCategories } from "../utils/posts";
 const menuRoutes = [
-    {
-        text: "About",
-        url: "/blog/about",
-    },
+  {
+    text: "About",
+    url: "/blog/about",
+  },
 ];
 
 const posts = await Astro.glob<Post>("../pages/blog/**/*.{mdx,md}");
 const postsByCategory = postCategories(posts);
 ---
 
-<div class="wrap">
-    <svg class="svg" viewBox="-80 -80 160 160">
-        <line
-            class="menu-line"
-            x1="-40"
-            y1="-20"
-            x2="40"
-            y2="-20"
-            stroke-width="10"
-            stroke-linecap="round"></line>
-        <line
-            class="menu-line"
-            x1="-40"
-            y1="20"
-            x2="40"
-            y2="20"
-            stroke-width="10"
-            stroke-linecap="round"></line>
-        <path
-            class="close-path"
-            d="M-20 20 L20 0 L-20 -20"
-            stroke-width="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            fill="transparent"></path>
-    </svg>
+<div transition:persist class="wrap">
+  <svg class="svg" viewBox="-80 -80 160 160">
+    <line
+      class="menu-line"
+      x1="-40"
+      y1="-20"
+      x2="40"
+      y2="-20"
+      stroke-width="10"
+      stroke-linecap="round"></line>
+    <line
+      class="menu-line"
+      x1="-40"
+      y1="20"
+      x2="40"
+      y2="20"
+      stroke-width="10"
+      stroke-linecap="round"></line>
+    <path
+      class="close-path"
+      d="M-20 20 L20 0 L-20 -20"
+      stroke-width="10"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="transparent"></path>
+  </svg>
 </div>
 <menu class="menu">
-    <div class="menu-header"></div>
-    <ul class="menu-content py-6 px-4">
-        {
-            menuRoutes.map((x) => (
-                <li class="py-2 flex hover:text-gray-400 transition-all ">
-                    <a
-                        rel="prefetch"
-                        class="flex-1"
-                        href={new URL(x.url, Astro.url)}
-                    >
-                        {x.text}
-                    </a>
-                </li>
-            ))
-        }
-    </ul>
-    <div class="menu-categories py-6 px-4">
-        <p class="py-2">Categories:</p>
-        <div class="chip-wrap">
-            {
-                Object.entries(postsByCategory).map(([k, v]) => (
-                    <a
-                        rel="prefetch"
-                        class="transition-all hover:bg-gray-400 text-sm chip"
-                        href={
-                            new URL(`/category/${k.toLowerCase()}`, Astro.url)
-                        }
-                    >
-                        {k}
-                    </a>
-                ))
-            }
-            <div></div>
-        </div>
+  <div class="menu-header"></div>
+  <ul class="menu-content py-6 px-4">
+    {
+      menuRoutes.map((x) => (
+        <li class="py-2 flex hover:text-gray-400 transition-all ">
+          <a rel="prefetch" class="flex-1" href={new URL(x.url, Astro.url)}>
+            {x.text}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="menu-categories py-6 px-4">
+    <p class="py-2">Categories:</p>
+    <div class="chip-wrap">
+      {
+        Object.entries(postsByCategory).map(([k]) => (
+          <a
+            rel="prefetch"
+            class="transition-all hover:bg-gray-400 text-sm chip"
+            href={new URL(`/category/${k.toLowerCase()}`, Astro.url)}
+          >
+            {k}
+          </a>
+        ))
+      }
+      <div></div>
+    </div>
 
-        <script defer={true}>
-            import { menuStore } from "../store/menuStore.ts";
+    <script defer={true}>
+    import { menuStore } from "../store/menuStore.ts";
 
+    document.addEventListener('astro:page-load', setupNavHandle(true), { once: true });
+    document.addEventListener('astro:after-swap', setupNavHandle(false));
+
+    function setupNavHandle(immediateAnimation) {
+        return function () {
             const lsKey = "od-menuState";
-            let menuState = (window.sessionStorage.getItem(lsKey) ||
-                "close") as "open" | "close";
+            let menuState = (window.sessionStorage.getItem(lsKey) || "close") as
+              | "open"
+              | "close";
             let open = menuState === "open";
             const wrap = document.querySelector(".wrap") as HTMLElement;
             const menu = document.querySelector(".menu") as HTMLElement;
             const svg = document.querySelector(".svg") as HTMLElement;
 
             wrap.addEventListener("click", () => {
-                open = !open;
-                setMenuState();
-                window.sessionStorage.setItem(lsKey, open ? "open" : "close");
+              open = !open;
+              setMenuState();
+              window.sessionStorage.setItem(lsKey, open ? "open" : "close");
             });
+            if (immediateAnimation) {
+                menu.style.transition = ".2s all";
+                menu.style.visibility = "visible";
+                svg.style.visibility = "visible";
+            } else {
+                setTimeout(() => {
+                    menu.style.transition = ".2s all";
+                    menu.style.visibility = "visible";
+                    svg.style.visibility = "visible";
+                }, 100);
+            }
 
             setMenuState();
 
             function setMenuState() {
-                if (open) {
-                    reveilMenu();
-                    return;
-                }
-                closeMenu();
+              if (open) {
+                reveilMenu();
+                return;
+              }
+              closeMenu();
             }
 
             function closeMenu() {
-                menu.classList.remove("show");
-                svg.classList.remove("show");
-                menuStore.set("close");
+              menu.classList.remove("show");
+              svg.classList.remove("show");
+              menuStore.set("close");
             }
             function reveilMenu() {
-                menu.classList.add("show");
-                svg.classList.add("show");
-                menuStore.set("open");
+              menu.classList.add("show");
+              svg.classList.add("show");
+              menuStore.set("open");
             }
-
             setTimeout(() => {
                 menu.style.transition = ".2s all";
                 menu.style.visibility = "visible";
                 svg.style.visibility = "visible";
             }, 100);
-        </script>
+        }
+    }
+    </script>
 
-        <style>
-            .wrap {
-                height: 4rem;
-                width: 4rem;
-                margin-left: auto;
-                transition: 0.3s all;
-                cursor: pointer;
-                z-index: 1;
-            }
-            .menu-line {
-                stroke: #000;
-            }
-            .svg.show .menu-line {
-                stroke: transparent;
-            }
-            .svg.show .close-path {
-                stroke: #fff;
-            }
+    <style>
+      .wrap {
+        height: 4rem;
+        width: 4rem;
+        margin-left: auto;
+        transition: 0.3s all;
+        cursor: pointer;
+        z-index: 1;
+      }
+      .menu-line {
+        stroke: #000;
+      }
+      .svg.show .menu-line {
+        stroke: transparent;
+      }
+      .svg.show .close-path {
+        stroke: #fff;
+      }
 
-            .wrap:hover {
-                background: rgb(var(--accent));
-            }
-            .svg {
-                position: relative;
-                z-index: 1;
-                height: 100%;
-                width: 100%;
-                visibility: hidden;
-            }
-            .menu-header {
-                height: 4rem;
-                border-bottom: 1px solid #fff;
-            }
-            .menu {
-                border-left: 1px solid #ddd;
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                right: 0;
-                translate: 100%;
-                visibility: hidden;
-                width: 12rem;
-                background: rgb(var(--dark));
-                color: #fff;
-                height: 100%;
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-            .menu.show {
-                translate: 0;
-            }
-            .chip-wrap {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-            .chip {
-                color: rgb(var(--dark));
-                border-radius: 1rem;
-                padding: 0.01rem 0.3rem 0.04rem;
-                margin-top: 0.1rem;
-                margin-bottom: 0.1rem;
-                background: #cdcece;
-            }
-            .menu-content {
-            }
-            .menu-categories {
-            }
-        </style>
-    </div>
+      .wrap:hover {
+        background: rgb(var(--accent));
+      }
+      .svg {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+        visibility: visible;
+      }
+      .menu-header {
+        height: 4rem;
+        border-bottom: 1px solid #fff;
+      }
+      .menu {
+        border-left: 1px solid #ddd;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        translate: 100%;
+        visibility: hidden;
+        width: 12rem;
+        background: rgb(var(--dark));
+        color: #fff;
+        height: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        /*transition: .2s all;*/
+        visibility: visible;
+      }
+      .menu.show {
+        translate: 0;
+      }
+      .chip-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .chip {
+        color: rgb(var(--dark));
+        border-radius: 1rem;
+        padding: 0.01rem 0.3rem 0.04rem;
+        margin-top: 0.1rem;
+        margin-bottom: 0.1rem;
+        background: #cdcece;
+      }
+      .menu-content {
+      }
+      .menu-categories {
+      }
+    </style>
+  </div>
 </menu>
