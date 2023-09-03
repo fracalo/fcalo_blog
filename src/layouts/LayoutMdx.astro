@@ -3,6 +3,7 @@ import fs from "fs/promises";
 import { join } from "path";
 import type { Post as Props } from "../utils/posts";
 import { getFormattedDate } from "../utils/posts";
+import { getTitleTransName } from '../utils/shared'
 import GlobalLayout from "./GlobalLayout.astro";
 
 export type { Props };
@@ -58,7 +59,7 @@ if (social_image) {
 >
     <article class="blog-article pt-6 justify-center flex flex-1">
         <div class="content-wrapper p-2">
-            <h1 class="post-title">
+            <h1 class="post-title" transition:name={getTitleTransName(title)}>
                 {title}
             </h1>
             <div class="flex text-md text-gray-500 my-2">
