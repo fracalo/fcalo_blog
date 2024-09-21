@@ -28,7 +28,7 @@ function shiftHeadingDown() {
 }
 if (!VITE_SITE) {
   console.log("need to provide VITE_SITE for build");
-  exit(2);
+  //exit(2);
 }
 const mySwPlugin = options => {
   let config;
