@@ -1,34 +1,19 @@
-## # You can override the included template(s) by including variable overrides
-## # SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-## # Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-## # Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-## # Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-## # Note that environment variables can be set in several places
-## # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
-## stages:
-## - test
-## sast:
-##   stage: test
-## include:
-## - template: Security/SAST.gitlab-ci.yml
-## 
-#
-## stages:
-##   - deploy
+image: node:22.8-alpine
 
-deploy_ec2:
- stage: deploy
- environment:
-   name: fcalo-blog-astro 
-   url: 
- only:
-   - main
- script:
-     - cd /home/ec2-user/Repos/fcalo-blog-astro
-     - git fetch origin
-     - git reset --hard origin/main
-     - docker build -t docker-builder -f DockerfileForBuild .
-     - docker run --rm --name docker-builder-run --mount type=bind,source=/srv/www/fcalo-blog,target=/app/public-def docker-builder
-       #- docker rm docker-builder-run
-     - docker rmi docker-builder
-     - echo goodbye $(whoami)
+before_script:
+  - corepack enable
+  - corepack prepare --activate
+
+cache: 
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - .pnpm-store
+  policy: pull-push
+
+pages:
+  script:
+    - pnpm i
+    - pnpm build
+  artifacts:
+    paths:
+       - public
