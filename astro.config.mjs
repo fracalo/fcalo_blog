@@ -33,6 +33,8 @@ if (!VITE_SITE) {
 const mySwPlugin = options => {
   let config;
   return {
+    outputDir: 'public',
+    publicDir: 'static',
     name: "customSw",
     hooks: {
       "astro:config:done": async ({

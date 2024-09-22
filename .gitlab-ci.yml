@@ -1,5 +1,9 @@
 image: node:22.8-alpine
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
 before_script:
   - corepack enable
   - corepack prepare --activate
@@ -11,10 +15,12 @@ cache:
   policy: pull-push
 
 pages:
+  stage: deploy
   script:
     - pnpm i
     - pnpm build
-    - mv dist public
   artifacts:
     paths:
        - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
