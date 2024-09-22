@@ -16,4 +16,4 @@ pages:
     - pnpm build
   artifacts:
     paths:
-       - public
+       - dist
