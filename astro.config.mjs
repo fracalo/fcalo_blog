@@ -33,7 +33,7 @@ if (!VITE_SITE) {
 const mySwPlugin = options => {
   let config;
   return {
-    outputDir: 'public',
+    outDir: 'public',
     publicDir: 'static',
     name: "customSw",
     hooks: {
