@@ -11,6 +11,7 @@ type Props = {
 
 import { getTitleTransName } from '../utils/shared'
 
+const { VITE_SITE } = import.meta.env
 const {
     title,
     summary,
@@ -29,7 +30,7 @@ if (date) {
 ---
 
 <article>
-    <a href={url}>
+    <a href={`${VITE_SITE}url`}>
         <h2 class="post-title pb-2" transition:name={getTitleTransName(title)} >
             {title}
         </h2>
@@ -40,7 +41,7 @@ if (date) {
                 <a
                     rel="prefetch"
                     class="text-sm font-semibold text-gray-700 whitespace-nowrap"
-                    href={`/category/${x.toLowerCase()}`}
+                    href={`${VITE_SITE}/category/${x.toLowerCase()}`}
                 >
                     <p class="pr-2 py-1">#{x}</p>
                 </a>

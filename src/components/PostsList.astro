@@ -3,6 +3,9 @@ import PostListItem from "../components/PostListItem.astro";
 import type { Post } from "../utils/posts";
 import { pageSize, orderPosts, pagePosts } from "../utils/posts";
 import Pagination from "./Pagination.astro";
+const {
+  VITE_SITE
+} = import.meta.env;
 
 type Props = {
     page?: number | undefined;
@@ -35,12 +38,12 @@ const totalPages = Math.ceil(posts.length / pageSize);
 const nextBase = category
     ? `/category/${category}/${page + 1}`
     : `/${page + 1}`;
-const nextLink = totalPages > page ? nextBase : undefined;
+const nextLink = `${VITE_SITE}${totalPages > page ? nextBase : undefined}`;
 
 const prevBase = category
     ? `/category/${category}/${page - 1}`
     : `/${page - 1}`;
-const prevLink = page > 1 ? prevBase : undefined;
+const prevLink = `${VITE_SITE}${page > 1 ? prevBase : undefined}`;
 ---
 
 {
@@ -56,7 +59,7 @@ const prevLink = page > 1 ? prevBase : undefined;
             category={x.frontmatter.category}
             readingTime={x.readingTime?.text}
             isLast={i === pagedPosts.length - 1}
-            url={x.url!}
+            url={`${VITE_SITE}x.url!`}
         />
     ))
 }
