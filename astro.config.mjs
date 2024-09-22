@@ -33,8 +33,6 @@ if (!VITE_SITE) {
 const mySwPlugin = options => {
   let config;
   return {
-    outDir: 'public',
-    publicDir: 'static',
     name: "customSw",
     hooks: {
       "astro:config:done": async ({
@@ -62,6 +60,8 @@ const mySwPlugin = options => {
 
 // https://astro.build/config
 export default defineConfig({
+  outDir: 'public',
+  publicDir: 'static',
   site: VITE_SITE,
   markdown: {
     extendDefaultPlugins: true,

@@ -8,11 +8,11 @@ before_script:
   - corepack enable
   - corepack prepare --activate
 
-cache: 
-  key: $CI_COMMIT_REF_SLUG
-  paths:
-    - .pnpm-store
-  policy: pull-push
+  #cache: 
+  #  key: $CI_COMMIT_REF_SLUG
+  #  paths:
+  #    - .pnpm-store
+  #  policy: pull-push
 
 pages:
   stage: deploy
