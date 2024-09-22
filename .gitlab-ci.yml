@@ -16,6 +16,10 @@ before_script:
 
 pages:
   stage: deploy
+  variables:
+    VITE_SITE_DESC: "Francesco Calo's blog, a fullstack web developer journey, from devops, automation to functional programming, linux, typescript, nodejs, k8s, bash."
+    VITE_PAGE_SIZE: 5
+    VITE_SITE: 'https://fracalo.gitlab.io/fcalo-blog-astro/' # 'https://fcalo.com'
   script:
     - pnpm i
     - pnpm build
