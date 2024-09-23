@@ -45,7 +45,7 @@ const mySwPlugin = options => {
                     <script>
                         if ('serviceWorker' in navigator) {
                             window.addEventListener('load', () => {
-                                navigator.serviceWorker.register('/sw.js');
+                                navigator.serviceWorker.register('${VITE_SITE}/sw.js');
                             });
                         }
                     </script>`.split("\n").map(x => x.trim()).join("");

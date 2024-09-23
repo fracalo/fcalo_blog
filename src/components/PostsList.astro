@@ -59,7 +59,7 @@ const prevLink = `${VITE_SITE}${page > 1 ? prevBase : undefined}`;
             category={x.frontmatter.category}
             readingTime={x.readingTime?.text}
             isLast={i === pagedPosts.length - 1}
-            url={`${VITE_SITE}x.url!`}
+            url={`${VITE_SITE}${x.url!}`}
         />
     ))
 }
