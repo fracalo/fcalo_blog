@@ -15,7 +15,8 @@ import partytown from "@astrojs/partytown";
 import fs from "fs/promises";
 import path from "path";
 const {
-  VITE_SITE
+  VITE_SITE,
+  VITE_SITE_PATH
 } = import.meta.env;
 function shiftHeadingDown() {
   return tree => {
@@ -45,7 +46,7 @@ const mySwPlugin = options => {
                     <script>
                         if ('serviceWorker' in navigator) {
                             window.addEventListener('load', () => {
-                                navigator.serviceWorker.register('${VITE_SITE}/sw.js');
+                                navigator.serviceWorker.register('${VITE_SITE_PATH}/sw.js');
                             });
                         }
                     </script>`.split("\n").map(x => x.trim()).join("");
@@ -63,6 +64,7 @@ export default defineConfig({
   outDir: 'public',
   publicDir: 'static',
   site: VITE_SITE,
+  base: VITE_SITE_PATH,
   markdown: {
     extendDefaultPlugins: true,
     draft: true,
@@ -72,10 +74,13 @@ export default defineConfig({
       wrap: true
     }
   },
-  integrations: [mdx({
-    extendDefaultPlugins: true,
-    draft: true,
-    remarkPlugins: [rehypeAccessibleEmojis, readingTime, readingMdxTime],
-    rehypePlugins: [shiftHeadingDown]
-  }), tailwind(), sitemap(), prefetch(), critters(), partytown(), mySwPlugin()]
+  integrations: [
+      mdx({
+         extendDefaultPlugins: true,
+         draft: true,
+         remarkPlugins: [rehypeAccessibleEmojis, readingTime, readingMdxTime],
+         rehypePlugins: [shiftHeadingDown]
+      }),
+      tailwind(), sitemap(), prefetch(), critters(), partytown(), mySwPlugin()
+  ]
 });
