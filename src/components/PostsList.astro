@@ -3,9 +3,6 @@ import PostListItem from "../components/PostListItem.astro";
 import type { Post } from "../utils/posts";
 import { pageSize, orderPosts, pagePosts } from "../utils/posts";
 import Pagination from "./Pagination.astro";
-const {
-  VITE_SITE_PATH,
-} = import.meta.env;
 
 type Props = {
     page?: number | undefined;
@@ -59,7 +56,7 @@ const prevLink = page > 1 ? prevBase : undefined;
             category={x.frontmatter.category}
             readingTime={x.readingTime?.text}
             isLast={i === pagedPosts.length - 1}
-            url={`${VITE_SITE_PATH}${x.url!}`}
+            url={x.url!}
         />
     ))
 }
