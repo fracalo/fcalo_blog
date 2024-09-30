@@ -2,6 +2,6 @@
 
 Proudly made with[Astro](https://astro.build)~
 
-Served though github pages.
+Served though Github pages.
 
-### [Outskirt development](https://fracalo.github.io/fcalo_blog).
+### [Outskirt development](https://fcalo.com).

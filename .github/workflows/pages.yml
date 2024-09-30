@@ -14,8 +14,8 @@ jobs:
     env:
       VITE_SITE_DESC: "Francesco Calo's blog, a fullstack web developer journey, from devops, automation to functional programming, linux, typescript, nodejs, k8s, bash."
       VITE_PAGE_SIZE: 5
-      VITE_SITE: 'https://fracalo.github.io'
-      VITE_SITE_PATH: '/fcalo_blog'
+      VITE_SITE: 'https://fcalo.com'
+      VITE_SITE_PATH: '/'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

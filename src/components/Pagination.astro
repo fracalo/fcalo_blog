@@ -7,6 +7,7 @@ type Props = {
 };
 
 import ToggleableAnchor from "./ToggleableAnchor.astro";
+import { join } from 'path'
 
 const { VITE_SITE_PATH } = import.meta.env;
 
@@ -19,7 +20,7 @@ const { page, totalPages, prevLink, nextLink } = Astro.props;
         Page {page} / {totalPages}
     </p>
     <div class="inline-flex">
-        <ToggleableAnchor text="Prev" href={prevLink && `${VITE_SITE_PATH}/${prevLink.toString()}`} />
-        <ToggleableAnchor text="Next" href={nextLink && `${VITE_SITE_PATH}/${nextLink.toString()}`} />
+        <ToggleableAnchor text="Prev" href={prevLink && join(VITE_SITE_PATH, prevLink.toString())} />
+        <ToggleableAnchor text="Next" href={nextLink && join(VITE_SITE_PATH, nextLink.toString())} />
     </div>
 </div>

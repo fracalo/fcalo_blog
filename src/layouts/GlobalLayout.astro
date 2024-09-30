@@ -28,7 +28,7 @@ const { VITE_SITE_DESC: fallbackDesc, VITE_SITE_PATH } = import.meta.env;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/png" href={join(VITE_SITE_PATH, 'favicon.png')} />
+    <link rel="icon" type="image/png" href={join(VITE_SITE_PATH, '/favicon.png')} />
     <meta name="generator" content={`${Astro.generator} and me`} />
     <meta name="description" content={description || fallbackDesc} />
     <title>{title}</title>
@@ -38,7 +38,7 @@ const { VITE_SITE_DESC: fallbackDesc, VITE_SITE_PATH } = import.meta.env;
         <>
         <link rel="manifest" href={join(VITE_SITE_PATH, '/manifest.json')} />
           <meta name="theme-color" content="#f43c3c" />
-          <link rel="apple-touch-icon" href={join(VITE_SITE_PATH, 'images/icons-192-bg.png')} />
+          <link rel="apple-touch-icon" href={join(VITE_SITE_PATH, '/images/icons-192-bg.png')} />
         </>
       )
     }

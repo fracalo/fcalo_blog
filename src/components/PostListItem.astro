@@ -10,6 +10,7 @@ type Props = {
 };
 
 import { getTitleTransName } from '../utils/shared'
+import { join } from 'path'
 
 const { VITE_SITE_PATH } = import.meta.env
 const {
@@ -41,7 +42,7 @@ if (date) {
                 <a
                     rel="prefetch"
                     class="text-sm font-semibold text-gray-700 whitespace-nowrap"
-                    href={`${VITE_SITE_PATH}/category/${x.toLowerCase()}`}
+                    href={join(VITE_SITE_PATH, '/category/', x.toLowerCase())}
                 >
                     <p class="pr-2 py-1">#{x}</p>
                 </a>

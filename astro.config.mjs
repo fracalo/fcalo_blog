@@ -65,6 +65,7 @@ export default defineConfig({
   publicDir: 'static',
   site: VITE_SITE,
   base: VITE_SITE_PATH,
+  trailingSlash: 'always',
   markdown: {
     extendDefaultPlugins: true,
     draft: true,
