@@ -1,6 +1,6 @@
 # Welcome to my blog
 
-Proudly made with[Astro](https://astro.build)~
+Proudly made with [Astro](https://astro.build).
 
 Served though Github pages.
 

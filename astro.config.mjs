@@ -13,7 +13,7 @@ import prefetch from "@astrojs/prefetch";
 import critters from "astro-critters";
 import partytown from "@astrojs/partytown";
 import fs from "fs/promises";
-import path from "path";
+import path, { join } from "path";
 const {
   VITE_SITE,
   VITE_SITE_PATH
@@ -42,11 +42,12 @@ const mySwPlugin = options => {
         config = cfg;
       },
       "astro:build:done": async args => {
+        const swUrl = join(VITE_SITE_PATH, 'sw.js');
         const injection = `
                     <script>
                         if ('serviceWorker' in navigator) {
                             window.addEventListener('load', () => {
-                                navigator.serviceWorker.register('${VITE_SITE_PATH}/sw.js');
+                                navigator.serviceWorker.register('${VITE_SITE}${swUrl}');
                             });
                         }
                     </script>`.split("\n").map(x => x.trim()).join("");
