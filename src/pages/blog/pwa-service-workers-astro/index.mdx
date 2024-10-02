@@ -1,0 +1,106 @@
+---
+title: PWA, Service Workers & Astro
+date: '2024-10-02T10:23:49.284Z'
+summary: Build a Native like apps in Astro, with the power of Progressive Web App and Workbox
+category: [web, pwa, astro]
+layout: ../../../layouts/LayoutMdx.astro
+---
+
+import { Image } from 'astro:assets'
+import native from './native-who.png'
+
+## Definition of Progressive Web App (PWA) 
+a PWA is collection of Web Apis that can progressively enhance a web resource in a way that resembles a native app. 
+The backbone of this pattern is the usage of service-workers (SW from now on) in order to increase the normal browser-tab scope a website page usually lives in.  
+Once installed the SW process is autonomous from the html page which brought it, it can manage features like:   
+    - Offline support
+    - Caching of content
+    - Mediate network requests
+    - Push notification
+
+The  most visible aspect of PWA is that it makes them installable (like native apps),  
+without having to pass thourgh a portal like ios app store or google play,  
+the PWA is simply packaged in the html page resources,  
+the details of the complementary metadata associated with the app is stored in the manifest.
+
+So with a `manifest`, service-workers, and some progressive enhancement we've got a PWA.
+
+<Image src={native} alt="guess who's the native" widths={[200, 400, 800]} sizes="(max-width: 800px) 100vw, 800px" formats={['avif', 'jpeg', 'png', 'webp']} />
+---
+
+
+Service worker scope is defined by the hierarchy of the page which brings it in.  
+Usually it is placed in the homepage, so it can control the root and all the associated nested paths.
+
+But the first step is...
+
+## Create the SW
+
+As far a SW integration I'll use workbox as it provides a high level api for service workers.
+
+The config, stored in workbox-config.js, looks like this:
+```js
+module.exports = {
+    globDirectory: "public/",
+    globPatterns: [
+        "**/*.{js,html,css,avif,png,jpeg,webp,jpg,woff2,woff,wasm,ico,svg,txt,xml}",
+    ],
+    swDest: "public/sw",
+};
+```
+Running the [generateSW function](https://developer.chrome.com/docs/workbox/modules/workbox-build#method-generateSW) a SW with the capability of precaching is created.  
+To work the command must run on an already built version of the Astro application, therefore i configured the `build` npm script to do the operations sequentially.
+```
+    "build": "astro build && workbox generateSW workbox-config.cjs",
+```
+
+## Integration in Astro
+
+To load the SW in the application root markup i created this custom astro plugin.
+```ts
+
+const mySwPlugin = options => {
+  let config;
+  return {
+    name: "customSw",
+    hooks: {
+      "astro:config:done": async ({
+        config: cfg
+      }) => {
+        config = cfg;
+      },
+      "astro:build:done": async args => {
+        const injection = `
+                    <script>
+                        if ('serviceWorker' in navigator) {
+                            window.addEventListener('load', () => {
+                                navigator.serviceWorker.register('${VITE_SITE_PATH}/sw.js');
+                            });
+                        }
+                    </script>`.split("\n").map(x => x.trim()).join("");
+        const indexPath = path.join(config.outDir.pathname, "index.html");
+        const indexHtml = await fs.readFile(indexPath, "utf8");
+        const indexHtml2 = indexHtml.replace("</head>", injection + "</head>");
+        await fs.writeFile(indexPath, indexHtml2);
+      }
+    }
+  };
+};
+```
+
+This does the injection of the SW script right before the closing `</head>` tag,  
+BTW, the repo is public, [take a peek freely](https://github.com/fracalo/fcalo_blog/blob/main/astro.config.mjs#L34-L60).   
+
+The [manifest file](https://github.com/fracalo/fcalo_blog/blob/main/static/manifest.json) is prepared manually and placed in the `static` folder (NB: in the default Astro config this maps to the `public` dir, but on the reference repo is was customized).  
+
+The way we bring in the manifest file is a bit different than the service worker, given we don't need the built app it's loaded in the [GlobalLayout astro component](https://github.com/fracalo/fcalo_blog/blob/main/src/layouts/GlobalLayout.astro#L37-L42).  
+
+## Conclusion
+
+Building a PWA in Astro is easy, through the extensible nature of Astro it wasn't complex to find a solution.
+
+At the time of writing there is no community plugin to generate and load the SW in the root of the site,  
+i guess this is related to the fact that to create the SW we need to have a built version of the project.
+
+Hopefully the manual workaround presented here is not too bad!
+

@@ -126,11 +126,11 @@ But this is easily replicable with a script, and astrojs has got you covered wit
 Under the hood the addon will search for all elements with this attribute and, if the connection is not 2g/3g, it will make a request that will cache the page.  
  
 ### PWA and service worker
-The PWA manifest is dropped directly into the `public` dir and imported in the root page. 
+The PWA manifest is dropped directly into the `static` dir and imported in the root page. 
 
 To deal with service worker I used the workbox-cli with `generateSW flow`.  
 Then, through the Astro plugin integration api, the import logic is written in my homepage index.  
-If you want to know more about that you can read the [dedicated thread about it (coming soon)](https://fcalo.com/).
+If you want to know more about that you can read the [dedicated post about it](https://fcalo.com/blog/pwa-service-workers-astro/).
 
 
 ## Wrapping up
