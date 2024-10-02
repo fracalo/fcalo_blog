@@ -57,7 +57,9 @@ const postsByCategory = postCategories(posts);
     <p class="py-2">Categories:</p>
     <div class="chip-wrap">
       {
-        Object.entries(postsByCategory).map(([k]) => (
+      Object.entries(postsByCategory)
+      .toSorted(([k], [nextK]) => k.localeCompare(nextK))
+      .map(([k]) => (
           <a
             rel="prefetch"
             class="transition-all hover:bg-gray-400 text-sm chip"

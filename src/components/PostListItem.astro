@@ -38,7 +38,9 @@ if (date) {
     </a>
     <div class="flex gap-2 flex-wrap py-2">
         {
-            category.map((x: string) => (
+        category
+        .toSorted((a,b) => a.localeCompare(b))
+        .map((x: string) => (
                 <a
                     rel="prefetch"
                     class="text-sm font-semibold text-gray-700 whitespace-nowrap"
