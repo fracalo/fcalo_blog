@@ -9,7 +9,6 @@ import { visit } from "unist-util-visit";
 
 /** @type {import('unified').Plugin<[], import('hast').Root>} */
 import sitemap from "@astrojs/sitemap";
-import prefetch from "@astrojs/prefetch";
 import critters from "astro-critters";
 import partytown from "@astrojs/partytown";
 import fs from "fs/promises";
@@ -67,6 +66,9 @@ export default defineConfig({
   site: VITE_SITE,
   base: VITE_SITE_PATH,
   trailingSlash: 'ignore', //'always',
+  prefetch: {
+    defaultStrategy: 'viewport'
+  },
   markdown: {
     extendDefaultPlugins: true,
     draft: true,
@@ -83,6 +85,6 @@ export default defineConfig({
          remarkPlugins: [rehypeAccessibleEmojis, readingTime, readingMdxTime],
          rehypePlugins: [shiftHeadingDown]
       }),
-      tailwind(), sitemap(), prefetch(), critters(), partytown(), mySwPlugin()
+      tailwind(), sitemap(), critters(), partytown(), mySwPlugin()
   ]
 });

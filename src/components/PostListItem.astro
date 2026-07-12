@@ -42,7 +42,6 @@ if (date) {
         .toSorted((a,b) => a.localeCompare(b))
         .map((x: string) => (
                 <a
-                    rel="prefetch"
                     class="text-sm font-semibold text-gray-700 whitespace-nowrap"
                     href={join(VITE_SITE_PATH, '/category/', x.toLowerCase())}
                 >

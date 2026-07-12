@@ -13,7 +13,6 @@
   "dependencies": {
     "@astrojs/mdx": "^7.0.2",
     "@astrojs/partytown": "^2.1.7",
-    "@astrojs/prefetch": "^0.4.1",
     "@astrojs/sitemap": "^3.7.3",
     "@astrojs/tailwind": "^6.0.2",
     "@fontsource/kiwi-maru": "^4.5.14",
