@@ -2,7 +2,7 @@
 import "../css/styles.scss";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import { join } from 'path'
 
 type Props = {
@@ -32,7 +32,7 @@ const { VITE_SITE_DESC: fallbackDesc, VITE_SITE_PATH } = import.meta.env;
     <meta name="generator" content={`${Astro.generator} and me`} />
     <meta name="description" content={description || fallbackDesc} />
     <title>{title}</title>
-    <ViewTransitions />
+    <ClientRouter />
     {
       isRoot && (
         <>
@@ -63,25 +63,32 @@ const { VITE_SITE_DESC: fallbackDesc, VITE_SITE_PATH } = import.meta.env;
       <slot />
       <Footer />
     </div>
-    <script defer={true}>
+    <script type="module">
         import { menuStore } from "../store/menuStore.ts";
         import type { MenuStoreStates } from "../store/menuStore.ts";
 
-        document.addEventListener('astro:page-load', reactToNavStateCb(true), { once: true });
-        document.addEventListener('astro:after-swap', reactToNavStateCb(false));
+        // This <script> re-executes on every swap (it's not transition:persist), so guard
+        // against re-registering the nav listeners and the menuStore subscription.
+        if (!(window as any).__globalLayoutNavBound) {
+            (window as any).__globalLayoutNavBound = true;
 
+            menuStore.subscribe((v: MenuStoreStates) => {
+              const mainWrapper = document.querySelector(".main-wrapper") as HTMLElement | null;
+              const menu = document.querySelector(".menu") as HTMLElement | null;
+              if (!mainWrapper || !menu) return;
+              const menuWidth = menu.getBoundingClientRect().width;
+              mainWrapper.style.paddingRight = v === "open" ? `${menuWidth}px` : "initial";
+            });
+
+            document.addEventListener('astro:page-load', reactToNavStateCb(true), { once: true });
+            document.addEventListener('astro:after-swap', reactToNavStateCb(false));
+        }
 
         function reactToNavStateCb(immediateAnimation) {
             return function () {
                 const mainWrapper = document.querySelector(
                   ".main-wrapper"
                 ) as HTMLElement;
-                const menu = document.querySelector(".menu") as HTMLElement;
-                const menuWidth = menu.getBoundingClientRect().width;
-                menuStore.subscribe((v: MenuStoreStates) => {
-                  mainWrapper.style.paddingRight =
-                    v === "open" ? `${menuWidth}px` : "initial";
-                });
                 if (immediateAnimation) {
                     mainWrapper.style.transition = ".2s all";
                 }
@@ -95,7 +102,7 @@ const { VITE_SITE_DESC: fallbackDesc, VITE_SITE_PATH } = import.meta.env;
 
     </script>
 
-    <script async={true}>
+    <script type="module">
       import "@fontsource/kiwi-maru";
     </script>
     <script

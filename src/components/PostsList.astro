@@ -12,7 +12,9 @@ const { page = 1, category } = Astro.props;
 
 let posts: Array<Post> = [];
 try {
-    posts = await Astro.glob<Post>("../pages/blog/**/*.{mdx,md}");
+    posts = Object.values(
+        import.meta.glob<Post>("../pages/blog/**/*.{mdx,md}", { eager: true })
+    );
 } catch (e) {
     console.log(e);
 }

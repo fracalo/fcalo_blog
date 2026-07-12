@@ -9,11 +9,13 @@ const menuRoutes = [
   },
 ];
 
-const posts = await Astro.glob<Post>("../pages/blog/**/*.{mdx,md}");
+const posts = Object.values(
+  import.meta.glob<Post>("../pages/blog/**/*.{mdx,md}", { eager: true })
+);
 const postsByCategory = postCategories(posts);
 ---
 
-<div transition:persist class="wrap">
+<div transition:persist transition:name="menu-wrap" class="wrap">
   <svg class="svg" viewBox="-80 -80 160 160">
     <line
       class="menu-line"
@@ -46,7 +48,7 @@ const postsByCategory = postCategories(posts);
     {
       menuRoutes.map((x) => (
         <li class="py-2 flex hover:text-gray-400 transition-all ">
-          <a rel="prefetch" class="flex-1" href={new URL(join(VITE_SITE_PATH,x.url), Astro.url)}>
+          <a class="flex-1" href={new URL(join(VITE_SITE_PATH,x.url), Astro.url)}>
             {x.text}
           </a>
         </li>
@@ -61,7 +63,6 @@ const postsByCategory = postCategories(posts);
       .toSorted(([k], [nextK]) => k.localeCompare(nextK))
       .map(([k]) => (
           <a
-            rel="prefetch"
             class="transition-all hover:bg-gray-400 text-sm chip"
             href={new URL(join(VITE_SITE_PATH,'category', k.toLowerCase()), Astro.url)}
           >
@@ -72,66 +73,61 @@ const postsByCategory = postCategories(posts);
       <div></div>
     </div>
 
-    <script defer={true}>
+    <script type="module">
     import { menuStore } from "../store/menuStore.ts";
 
-    document.addEventListener('astro:page-load', setupNavHandle(true), { once: true });
-    document.addEventListener('astro:after-swap', setupNavHandle(false));
+    const lsKey = "od-menuState";
+    const isOpen = () => (window.sessionStorage.getItem(lsKey) || "close") === "open";
 
-    function setupNavHandle(immediateAnimation) {
-        return function () {
-            const lsKey = "od-menuState";
-            let menuState = (window.sessionStorage.getItem(lsKey) || "close") as
-              | "open"
-              | "close";
-            let open = menuState === "open";
-            const wrap = document.querySelector(".wrap") as HTMLElement;
-            const menu = document.querySelector(".menu") as HTMLElement;
-            const svg = document.querySelector(".svg") as HTMLElement;
-
-            wrap.addEventListener("click", () => {
-              open = !open;
-              setMenuState();
-              window.sessionStorage.setItem(lsKey, open ? "open" : "close");
-            });
-            if (immediateAnimation) {
-                menu.style.transition = ".2s all";
-                menu.style.visibility = "visible";
-                svg.style.visibility = "visible";
-            } else {
-                setTimeout(() => {
-                    menu.style.transition = ".2s all";
-                    menu.style.visibility = "visible";
-                    svg.style.visibility = "visible";
-                }, 100);
-            }
-
-            setMenuState();
-
-            function setMenuState() {
-              if (open) {
-                reveilMenu();
-                return;
-              }
-              closeMenu();
-            }
-
-            function closeMenu() {
-              menu.classList.remove("show");
-              svg.classList.remove("show");
-              menuStore.set("close");
-            }
-            function reveilMenu() {
-              menu.classList.add("show");
-              svg.classList.add("show");
-              menuStore.set("open");
-            }
-            setTimeout(() => {
-                menu.style.transition = ".2s all";
-                menu.style.visibility = "visible";
-                svg.style.visibility = "visible";
-            }, 100);
+    function applyMenuState(open: boolean) {
+        const menu = document.querySelector(".menu") as HTMLElement | null;
+        const svg = document.querySelector(".svg") as HTMLElement | null;
+        if (open) {
+            menu?.classList.add("show");
+            svg?.classList.add("show");
+            menuStore.set("open");
+        } else {
+            menu?.classList.remove("show");
+            svg?.classList.remove("show");
+            menuStore.set("close");
         }
+    }
+
+    function enableMenuTransition() {
+        const menu = document.querySelector(".menu") as HTMLElement | null;
+        const svg = document.querySelector(".svg") as HTMLElement | null;
+        if (menu) menu.style.transition = ".2s all";
+        if (menu) menu.style.visibility = "visible";
+        if (svg) svg.style.visibility = "visible";
+    }
+
+    function syncOnNavigate(immediateAnimation: boolean) {
+        if (immediateAnimation) {
+            enableMenuTransition();
+        } else {
+            setTimeout(enableMenuTransition, 100);
+        }
+        applyMenuState(isOpen());
+    }
+
+    // .menu/.svg aren't transition:persist, so their state must be re-applied after every swap.
+    // This <script> re-executes on every swap too, so guard against re-registering listeners.
+    if (!(window as any).__menuIconNavBound) {
+        (window as any).__menuIconNavBound = true;
+        document.addEventListener('astro:page-load', () => syncOnNavigate(true), { once: true });
+        document.addEventListener('astro:after-swap', () => syncOnNavigate(false));
+    }
+
+    // .wrap IS transition:persist and survives swaps, but this <script> doesn't: it re-executes
+    // on every swap, so guard attachment with a flag on the persisted element itself.
+    const wrap = document.querySelector(".wrap") as HTMLElement;
+    if (wrap && !wrap.dataset.menuBound) {
+        wrap.dataset.menuBound = "true";
+        wrap.addEventListener("click", () => {
+            const open = !isOpen();
+            window.sessionStorage.setItem(lsKey, open ? "open" : "close");
+            applyMenuState(open);
+        });
     }
     </script>
 

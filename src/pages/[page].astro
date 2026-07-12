@@ -8,11 +8,13 @@ import {
 
 
 export const getStaticPaths = async () => {
-    const posts = await Astro.glob<Post>('../pages/blog/**/*.{mdx,md}')
+    const posts = Object.values(
+        import.meta.glob<Post>('../pages/blog/**/*.{mdx,md}', { eager: true })
+    )
     const pages = Math.floor(posts.length / pageSize) + 1
 
     return Array.from({length: pages})
-        .map((_, i) => ({params: {page: i + 1}}))
+        .map((_, i) => ({params: {page: String(i + 1)}}))
 }
 
 
