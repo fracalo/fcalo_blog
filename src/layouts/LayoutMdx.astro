@@ -33,17 +33,18 @@ const propMetas: Record<string, string> = {
 };
 
 if (social_image) {
-    const dirname = import.meta.url
-        .replace(/[^/]+$/, "")
-        .replace("file://", "");
-    const projRoot = join(dirname, "../../");
+    const projRoot = process.cwd();
     const socialImagePathTree = social_image.split("/");
     const socialImageName = socialImagePathTree[
         socialImagePathTree.length - 1
     ] as string;
-    fs.copyFile(
+    // In dev, Astro serves publicDir ("static/") live, so the copy must land there.
+    // In a static build, publicDir is copied into outDir ("public/") before pages
+    // render, so writing to "static/" here would never make it into the shipped output.
+    const outputDir = import.meta.env.DEV ? "static" : "public";
+    await fs.copyFile(
         join(projRoot, social_image),
-        join(projRoot, "/static/images/social/", socialImageName)
+        join(projRoot, outputDir, "/images/social/", socialImageName)
     );
     const socialUri = `${VITE_SITE}/images/social/${socialImageName}`;
     nameMetas["twitter:image:src"] = socialUri;
