@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import readingTime from "remark-reading-time";
 import readingMdxTime from "remark-reading-time/mdx";
 import { rehypeAccessibleEmojis } from "rehype-accessible-emojis";
@@ -70,20 +71,23 @@ export default defineConfig({
     defaultStrategy: 'viewport'
   },
   markdown: {
-    extendDefaultPlugins: true,
     draft: true,
     shikiConfig: {
       theme: "nord",
       //langs: [],
       wrap: true
-    }
+    },
+    // Astro 7 defaults to the native Satteri processor, which silently ignores
+    // remarkPlugins/rehypePlugins (they're never passed through to it at all).
+    // Opting into the JS-based unified() processor is required for custom plugins.
+    processor: unified({
+      remarkPlugins: [readingTime, readingMdxTime],
+      rehypePlugins: [rehypeAccessibleEmojis, shiftHeadingDown]
+    })
   },
   integrations: [
       mdx({
-         extendDefaultPlugins: true,
-         draft: true,
-         remarkPlugins: [rehypeAccessibleEmojis, readingTime, readingMdxTime],
-         rehypePlugins: [shiftHeadingDown]
+         draft: true
       }),
       tailwind(), sitemap(), critters(), partytown(), mySwPlugin()
   ]
