@@ -1,0 +1,63 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+import { postcards } from "../../utils/postcards";
+
+export const getStaticPaths = async () => {
+    return postcards.map((postcard) => ({
+        params: { path: postcard.slug },
+        props: { postcard },
+    }));
+};
+
+const { postcard } = Astro.props;
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+    "./images/*.jpg",
+    { eager: true }
+);
+const src = images[`./images/${postcard.photoFile}`]?.default;
+---
+
+<Layout
+    title={`Postcard from ${postcard.city}, ${postcard.country}`}
+    description={`${postcard.text} - ${postcard.city}, ${postcard.country} (${postcard.date})`}
+>
+    <div class="postcard-detail p-2 flex flex-col items-center">
+        <a href="/postcards" class="back-link pb-4">← Back to postcards</a>
+        {
+            src && (
+                <Image
+                    src={src}
+                    widths={[600, 1000, 1400]}
+                    sizes="(max-width: 1000px) 100vw, 1000px"
+                    formats={["avif", "webp", "jpeg"]}
+                    alt={`Postcard from ${postcard.city}, ${postcard.country}`}
+                    class="postcard-photo"
+                />
+            )
+        }
+        <div class="postcard-caption pt-4 text-center">
+            <p class="font-semibold">{postcard.text}</p>
+            <p class="text-gray-500">
+                {postcard.city}, {postcard.country} — {postcard.date}
+            </p>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .postcard-detail {
+        max-width: 100%;
+    }
+    .back-link {
+        align-self: flex-start;
+    }
+    .postcard-photo {
+        max-width: 100%;
+        max-height: 80vh;
+        width: auto;
+        height: auto;
+        border-radius: 0.25rem;
+    }
+</style>

@@ -1,0 +1,75 @@
+---
+import { Image } from "astro:assets";
+import { postcards } from "../utils/postcards";
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+    "../pages/postcards/images/*.jpg",
+    { eager: true }
+);
+
+const getImage = (photoFile: string) =>
+    images[`../pages/postcards/images/${photoFile}`]?.default;
+---
+
+<div class="masonry">
+    {
+        postcards.map((postcard) => {
+            const src = getImage(postcard.photoFile);
+            return (
+                <a
+                    class="masonry-item"
+                    href={`/postcards/${postcard.slug}`}
+                    aria-label={`View postcard from ${postcard.city}, ${postcard.country}`}
+                >
+                    {src && (
+                        <Image
+                            src={src}
+                            widths={[300, 600]}
+                            sizes="(max-width: 768px) 50vw, 33vw"
+                            formats={["avif", "webp", "jpeg"]}
+                            alt={`Postcard from ${postcard.city}, ${postcard.country}`}
+                            loading="lazy"
+                        />
+                    )}
+                    <p class="masonry-caption">
+                        {postcard.city}, {postcard.country}
+                    </p>
+                </a>
+            );
+        })
+    }
+</div>
+
+<style>
+    .masonry {
+        columns: 2;
+        column-gap: 0.75rem;
+    }
+    @media (min-width: 768px) {
+        .masonry {
+            columns: 3;
+        }
+    }
+    .masonry-item {
+        display: block;
+        break-inside: avoid;
+        margin-bottom: 0.75rem;
+        position: relative;
+    }
+    .masonry-item :global(img) {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 0.25rem;
+        transition: 0.2s opacity;
+    }
+    .masonry-item:hover :global(img) {
+        opacity: 0.85;
+    }
+    .masonry-caption {
+        font-size: 0.75rem;
+        color: rgb(var(--dark));
+        opacity: 0.7;
+        margin-top: 0.25rem;
+    }
+</style>

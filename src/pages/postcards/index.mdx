@@ -1,0 +1,31 @@
+---
+title: Postcards
+date: "2026-07-12T00:00:00.000Z"
+summary: A collection of postcards received over the years, and an invitation to send one.
+social_image: /src/pages/postcards/images/anita-nina.jpg
+layout: ../../layouts/LayoutMdx.astro
+---
+
+import { Image } from "astro:assets";
+import anitaNina from "./images/anita-nina.jpg";
+import PostcardMasonry from "../../components/PostcardMasonry.astro";
+
+<Image
+  src={anitaNina}
+  widths={[400, 800]}
+  sizes="(max-width: 800px) 100vw, 800px"
+  formats={["avif", "webp", "jpeg"]}
+  alt="Anita and Nina"
+/>
+
+<p class="italic text-gray-500">
+  At the time of writing (2026) my small daughter is bigger the the elder in the
+  photo, since i first went out with this postcard-for-my-kids initiative a lot
+  of things have change... But the spirit is still the same, lets connect!
+</p>
+
+If you'd like to send/receive a postcard, send a mail at <strong>fcaloisme at gmail.com</strong>
+
+## Received so far
+
+<PostcardMasonry />
